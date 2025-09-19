@@ -8,23 +8,109 @@
 
 config_version=5
 
-[gd_project format=4]
-
 [application]
+
 config/name="OvercookedLike"
 run/main_scene="res://scenes/Main.tscn"
-config/features=PackedStringArray("4.0")
-
-[rendering]
-renderer/rendering_method="forward_plus"
-textures/canvas_textures/default_texture_filter=1
+config/features=PackedStringArray("4.5")
 
 [input]
-move_left={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":65},{"type":"InputEventJoypadMotion","axis":0,"axis_value":-1.0}]}
-move_right={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":68},{"type":"InputEventJoypadMotion","axis":0,"axis_value":1.0}]}
-move_up={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":87},{"type":"InputEventJoypadMotion","axis":1,"axis_value":-1.0}]}
-move_down={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":83},{"type":"InputEventJoypadMotion","axis":1,"axis_value":1.0}]}
-interact={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":69},{"type":"InputEventJoypadButton","button_index":0}]}
-pick_drop={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":81},{"type":"InputEventJoypadButton","button_index":1}]}
-pickup={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":80}]}
-place={"deadzone":0.5,"events":[{"type":"InputEventKey","physical_keycode":81}]}
+
+move_left={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 65,
+"type": "InputEventKey"
+}, {
+"axis": 0,
+"axis_value": -1.0,
+"type": "InputEventJoypadMotion"
+}]
+}
+move_right={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 68,
+"type": "InputEventKey"
+}, {
+"axis": 0,
+"axis_value": 1.0,
+"type": "InputEventJoypadMotion"
+}]
+}
+move_up={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 87,
+"type": "InputEventKey"
+}, {
+"axis": 1,
+"axis_value": -1.0,
+"type": "InputEventJoypadMotion"
+}]
+}
+move_down={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 83,
+"type": "InputEventKey"
+}, {
+"axis": 1,
+"axis_value": 1.0,
+"type": "InputEventJoypadMotion"
+}]
+}
+interact={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 69,
+"type": "InputEventKey"
+}, {
+"button_index": 0,
+"type": "InputEventJoypadButton"
+}]
+}
+pick_drop={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 81,
+"type": "InputEventKey"
+}, {
+"button_index": 1,
+"type": "InputEventJoypadButton"
+}]
+}
+pickup={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 80,
+"type": "InputEventKey"
+}]
+}
+place={
+"deadzone": 0.5,
+"events": [{
+"physical_keycode": 81,
+"type": "InputEventKey"
+}]
+}
+recipe_1={
+"deadzone": 0.5,
+"events": [{
+"keycode": 49,
+"type": "InputEventKey"
+}, {
+"keycode": 4194337,
+"type": "InputEventKey"
+}]
+}
+recipe_2={
+"deadzone": 0.5,
+"events": [{
+"keycode": 50,
+"type": "InputEventKey"
+}, {
+"keycode": 4194338,
+"type": "InputEventKey"
+}]
+}
