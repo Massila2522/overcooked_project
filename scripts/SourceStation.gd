@@ -19,6 +19,7 @@ func try_use_station(player: Node) -> void:
 		player.set("held_item", new_item)
 		is_empty = true
 		_update_visual()
+		return
 
 func _update_visual() -> void:
 	var spr: Sprite2D = $Sprite
