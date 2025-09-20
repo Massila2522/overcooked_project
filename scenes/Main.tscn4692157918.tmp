@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=3 uid="uid://lnajt6g1dyas"]
+
+[ext_resource type="Script" uid="uid://oek5hnj2rh4p" path="res://scripts/Main.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/SourceStation.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/CookingStation.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/PlateStation.tscn" id="4"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+
+[node name="TileMap" type="TileMap" parent="."]
+format = 2
+
+[node name="Spawn_Player" type="Marker2D" parent="."]
+position = Vector2(100, 200)
+
+[node name="PlayerMarker" type="Sprite2D" parent="."]
+modulate = Color(0, 1, 0, 0.7)
+position = Vector2(100, 200)
+scale = Vector2(0.3, 0.3)
+
+[node name="Spawn_Cutting" type="Marker2D" parent="."]
+position = Vector2(400, 200)
+
+[node name="CuttingMarker" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 0, 0.7)
+position = Vector2(400, 200)
+scale = Vector2(0.3, 0.3)
+
+[node name="Spawn_Cooking" type="Marker2D" parent="."]
+position = Vector2(550, 200)
+
+[node name="CookingMarker" type="Sprite2D" parent="."]
+modulate = Color(1, 0.5, 0, 0.7)
+position = Vector2(550, 200)
+scale = Vector2(0.3, 0.3)
+
+[node name="Spawn_Rendu" type="Marker2D" parent="."]
+position = Vector2(700, 200)
+
+[node name="RenduMarker" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 0.7)
+position = Vector2(700, 200)
+scale = Vector2(0.3, 0.3)
+
+[node name="InstructionLabeCl" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 16.0
+offset_bottom = 8.0
+text = "Workflow: Ramasser tomate -> Découper -> Déposer au rendu"
+
+[node name="MessageLabel" type="Label" parent="."]
+offset_left = 16.0
+offset_top = 32.0
+offset_right = 416.0
+offset_bottom = 82.0
+text = "🍅 Ramasse la tomate !"
+autowrap_mode = 2
+
+[node name="SourceStation" parent="." instance=ExtResource("2")]
+position = Vector2(250, 200)
+
+[node name="PlateStation" parent="." instance=ExtResource("4")]
+position = Vector2(625, 200)
+
+[node name="CookingStation" parent="." instance=ExtResource("3")]
+position = Vector2(550, 200)

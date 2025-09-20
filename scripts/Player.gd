@@ -4,7 +4,6 @@ extends CharacterBody2D
 @export var autonomous: bool = true
 
 var held_item: Node2D = null
-var _auto_dir: Vector2 = Vector2(1, 0)
 var _interact_cooldown: float = 0.0
 
 # Recipe targeting
@@ -19,13 +18,20 @@ var assembly_point: Vector2 = Vector2.ZERO
 # Start paused until a recipe is chosen
 var ai_enabled: bool = false
 
+# Cibles des stations (assignées depuis Main.gd)
+var target_source: Node2D = null
+var target_cutting: Node2D = null
+var target_cooking: Node2D = null
+var target_rendu: Node2D = null
+var target_plate: Node2D = null
+
 func start_ai() -> void:
 	ai_enabled = true
 	_cache_targets()
 
 func _ready() -> void:
 	if autonomous:
-		_auto_dir = Vector2(1, 0).rotated(randf() * TAU).normalized()
+		pass
 	# Do not cache targets until recipe is chosen; Main will call start_ai()
 
 func _cache_targets() -> void:
@@ -85,14 +91,31 @@ func _update_target_mode() -> void:
 		target_group = "assembly"
 
 func _autonomous_move(delta: float) -> void:
-	var waypoint: Vector2 = _current_target_point()
-	var to_target: Vector2 = waypoint - global_position
-	var dist: float = to_target.length()
-	var desired: Vector2 = to_target.normalized() if dist > 0.001 else Vector2.ZERO
-	# arrive behavior near target
-	var target_speed: float = speed if dist > 60.0 else lerp(20.0, speed, dist / 60.0)
-	velocity = desired * target_speed
-	move_and_slide()
+	# Utiliser le système de recettes si une recette est active
+	if current_recipe.size() > 0 and step_index < current_recipe.size():
+		var waypoint: Vector2 = _current_target_point()
+		var to_target: Vector2 = waypoint - global_position
+		var dist: float = to_target.length()
+		var desired: Vector2 = to_target.normalized() if dist > 0.001 else Vector2.ZERO
+		# arrive behavior near target
+		var target_speed: float = speed if dist > 60.0 else lerp(20.0, speed, dist / 60.0)
+		velocity = desired * target_speed
+		move_and_slide()
+	else:
+		# Fallback au système de workflow simple
+		var target := _select_autonomous_target()
+		if target != null:
+			var to_target: Vector2 = (target.global_position - global_position)
+			if to_target.length() > 4.0:
+				velocity = to_target.normalized() * speed
+				move_and_slide()
+				# Si proche de la cible, tenter d'interagir
+				if to_target.length() < 24.0 and _interact_cooldown <= 0.0:
+					_auto_try_use()
+			else:
+				velocity = Vector2.ZERO
+		else:
+			velocity = Vector2.ZERO
 
 func _current_target_point() -> Vector2:
 	if target_group == "source":
@@ -131,6 +154,49 @@ func _auto_try_use() -> void:
 					if main and main.has_method("show_message"):
 						main.show_message("Ingrédient %s rejeté" % t)
 			return
+
+func _select_autonomous_target() -> Node2D:
+	# 1) Si un traitement est en cours sur une station, rester à proximité
+	if held_item == null:
+		# Priorité: rester près d'une station en cours
+		if target_cooking != null and target_cooking.get("is_cooking") == true:
+			return target_cooking
+		if target_cutting != null and target_cutting.get("is_cutting") == true:
+			return target_cutting
+		# Ensuite: récupérer un item prêt sur une station
+		if target_cooking != null and target_cooking.get("current_item") != null:
+			return target_cooking
+		if target_cutting != null and target_cutting.get("current_item") != null:
+			return target_cutting
+
+	# 2) Sinon, décider selon l'état de l'objet tenu
+	if held_item == null:
+		# Aller à la source seulement si elle a encore des ingrédients
+		if target_source != null and target_source.get("is_empty") == false:
+			return target_source
+		# Sinon rester près de la chaîne de production (préférence cuisson > découpe)
+		if target_cooking != null:
+			return target_cooking
+		if target_cutting != null:
+			return target_cutting
+		return target_source
+	
+	if held_item.has_method("get_display_name"):
+		var name: String = held_item.get_display_name()
+		if "assiette" in name:
+			# Si on tient déjà une assiette, aller rendre
+			return target_rendu
+		elif "coupé et cuit" in name:
+			if target_plate != null:
+				return target_plate
+			else:
+				return target_rendu
+		elif "coupé" in name:
+			return target_cooking
+		else:
+			return target_cutting
+
+	return target_source
 
 func _input(event: InputEvent) -> void:
 	if autonomous and ai_enabled:

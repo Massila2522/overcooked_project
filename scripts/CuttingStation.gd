@@ -13,7 +13,10 @@ func try_use_station(player: Node) -> void:
 		return
 	if current_item == null and player != null and player.has_method("get"):
 		if player.get("held_item") != null:
-			current_item = player.get("held_item") as Node2D
+			var held_item = player.get("held_item") as Node2D
+			if held_item.has_method("get_display_name") and "coupé" in held_item.get_display_name():
+				return
+			current_item = held_item
 			(player as Node).set("held_item", null)
 			current_item.reparent(self)
 			current_item.position = Vector2.ZERO
