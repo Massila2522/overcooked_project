@@ -6,21 +6,27 @@ func _ready() -> void:
 	_update_visual()
 
 func try_use_station(player: Node) -> void:
-	if player == null or not player.has_method("get"):
+	if not player:
 		return
-	var player_item = player.get("held_item") as Node2D
+	var player_item = player.held_item
 	if stored_item == null and player_item != null:
-		stored_item = player_item
-		stored_item.reparent(self)
-		stored_item.position = Vector2.ZERO
-		player.set("held_item", null)
-		_update_visual()
+		_store_item(player, player_item)
 	elif stored_item != null and player_item == null:
-		stored_item.reparent(player)
-		stored_item.position = (player as Node2D).position + Vector2(0, -16)
-		player.set("held_item", stored_item)
-		stored_item = null
-		_update_visual()
+		_give_item_to_player(player)
+
+func _store_item(player: Node, item: Node2D) -> void:
+	stored_item = item
+	stored_item.reparent(self)
+	stored_item.position = Vector2.ZERO
+	player.held_item = null
+	_update_visual()
+
+func _give_item_to_player(player: Node) -> void:
+	stored_item.reparent(player)
+	stored_item.position = player.position + Vector2(0, -16)
+	player.held_item = stored_item
+	stored_item = null
+	_update_visual()
 
 func _update_visual() -> void:
 	var spr: Sprite2D = $Sprite

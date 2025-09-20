@@ -1,50 +1,39 @@
-[gd_scene load_steps=8]
+[gd_scene load_steps=7 format=3 uid="uid://d26v6eiwtxilg"]
 
-[ext_resource type="Script" path="res://scripts/Main.gd" id="1"]
+[ext_resource type="Script" uid="uid://oek5hnj2rh4p" path="res://scripts/Main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/SourceStation.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/CookingStation.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/PlateStation.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/AssemblyStation.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/CuttingStation.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/CookingStation.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/PlateStation.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/RenduStation.tscn" id="6"]
 
 [node name="Main" type="Node2D" groups=["root"]]
 script = ExtResource("1")
 
 [node name="TileMap" type="TileMap" parent="."]
-
-[node name="Spawn_Player" type="Marker2D" parent="."]
-position = Vector2(100, 300)
-
-[node name="PlayerMarker" type="Sprite2D" parent="."]
-texture = ExtResource("2")
-scale = Vector2(0.3, 0.3)
-modulate = Color(0, 1, 0, 0.7)
-position = Vector2(100, 300)
-
-[node name="Spawn_Cutting" type="Marker2D" parent="."]
-position = Vector2(400, 300)
-
-[node name="Spawn_Cooking" type="Marker2D" parent="."]
-position = Vector2(500, 300)
-
-[node name="Spawn_Plate" type="Marker2D" parent="."]
-position = Vector2(600, 300)
-
-[node name="Spawn_Rendu" type="Marker2D" parent="."]
-position = Vector2(700, 300)
+format = 2
 
 [node name="Label" type="Label" parent="."]
+visible = false
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 16.0
+offset_bottom = 8.0
 text = "Choisis une recette avec les boutons:"
-position = Vector2(16, 8)
 
 [node name="MessageLabel" type="Label" parent="."]
+visible = false
+offset_left = 16.0
+offset_top = 32.0
+offset_right = 416.0
+offset_bottom = 82.0
 text = "🍅 Ramasse les ingrédients pour ta recette !"
-position = Vector2(16, 32)
-size = Vector2(400, 50)
 autowrap_mode = 2
 
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="Menu" type="Control" parent="UI"]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_left = 12.0
@@ -53,157 +42,88 @@ offset_right = 300.0
 offset_bottom = 120.0
 
 [node name="BtnPizza" type="Button" parent="UI/Menu"]
-text = "Pizza (dough, tomato, cheese)"
 layout_mode = 0
-offset_left = 0.0
-offset_top = 0.0
 offset_right = 280.0
 offset_bottom = 28.0
+text = "Pizza (dough, tomato, cheese)"
 
 [node name="BtnFunghi" type="Button" parent="UI/Menu"]
-text = "Funghi (dough, tomato, mushroom)"
 layout_mode = 0
-offset_left = 0.0
 offset_top = 36.0
 offset_right = 280.0
 offset_bottom = 64.0
+text = "Funghi (dough, tomato, mushroom)"
 
-[node name="IngredientsSection" type="Node2D" parent="."]
+[node name="RecipesRight" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 680.0
+offset_top = 40.0
+offset_right = 1100.0
+offset_bottom = 200.0
 
-[node name="IngredientLabel" type="Label" parent="IngredientsSection"]
-text = "INGRÉDIENTS"
-position = Vector2(50, 50)
-size = Vector2(200, 30)
-horizontal_alignment = 1
+[node name="PizzaRecipe" type="ColorRect" parent="UI/RecipesRight"]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 60.0
+color = Color(0, 0, 0, 1)
 
-[node name="Source_dough" parent="IngredientsSection" instance=ExtResource("2")]
-position = Vector2(50, 100)
+[node name="BtnPizzaOverlay" type="Button" parent="UI/RecipesRight"]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Pizza (dough, tomato, cheese)"
+flat = true
+
+[node name="FunghiRecipe" type="ColorRect" parent="UI/RecipesRight"]
+layout_mode = 0
+offset_top = 70.0
+offset_right = 360.0
+offset_bottom = 130.0
+color = Color(0, 0, 0, 1)
+
+[node name="BtnFunghiOverlay" type="Button" parent="UI/RecipesRight"]
+layout_mode = 0
+offset_top = 70.0
+offset_right = 360.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Funghi (dough, tomato, mushroom)"
+flat = true
+
+[node name="Source_dough" parent="." instance=ExtResource("2")]
+position = Vector2(120, 120)
 item_type = "dough"
 
-[node name="DoughLabel" type="Label" parent="IngredientsSection"]
-text = "Dough"
-position = Vector2(50, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
+[node name="Source_tomato" parent="." instance=ExtResource("2")]
+position = Vector2(200, 120)
 
-[node name="Source_tomato" parent="IngredientsSection" instance=ExtResource("2")]
-position = Vector2(150, 100)
-item_type = "tomato"
-
-[node name="TomatoLabel" type="Label" parent="IngredientsSection"]
-text = "Tomato"
-position = Vector2(150, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="Source_cheese" parent="IngredientsSection" instance=ExtResource("2")]
-position = Vector2(250, 100)
+[node name="Source_cheese" parent="." instance=ExtResource("2")]
+position = Vector2(280, 120)
 item_type = "cheese"
 
-[node name="CheeseLabel" type="Label" parent="IngredientsSection"]
-text = "Cheese"
-position = Vector2(250, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="Source_onion" parent="IngredientsSection" instance=ExtResource("2")]
-position = Vector2(100, 180)
+[node name="Source_onion" parent="." instance=ExtResource("2")]
+position = Vector2(160, 180)
 item_type = "onion"
 
-[node name="OnionLabel" type="Label" parent="IngredientsSection"]
-text = "Onion"
-position = Vector2(100, 220)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="Source_mushroom" parent="IngredientsSection" instance=ExtResource("2")]
-position = Vector2(200, 180)
+[node name="Source_mushroom" parent="." instance=ExtResource("2")]
+position = Vector2(240, 180)
 item_type = "mushroom"
 
-[node name="MushroomLabel" type="Label" parent="IngredientsSection"]
-text = "Mushroom"
-position = Vector2(200, 220)
-size = Vector2(80, 20)
-horizontal_alignment = 1
+[node name="CuttingStation" parent="." instance=ExtResource("3")]
+position = Vector2(489, 29)
 
-[node name="ProcessingSection" type="Node2D" parent="."]
+[node name="CookingStation" parent="." instance=ExtResource("4")]
+position = Vector2(586, 36)
 
-[node name="ProcessingLabel" type="Label" parent="ProcessingSection"]
-text = "STATIONS DE TRAITEMENT"
-position = Vector2(350, 50)
-size = Vector2(300, 30)
-horizontal_alignment = 1
+[node name="PlateStation" parent="." instance=ExtResource("5")]
+position = Vector2(498, 271)
 
-[node name="CuttingStation" parent="ProcessingSection" instance=ExtResource("2")]
-position = Vector2(400, 100)
-item_type = "cutting"
-
-[node name="CuttingLabel" type="Label" parent="ProcessingSection"]
-text = "Découper"
-position = Vector2(400, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="CookingStation" parent="ProcessingSection" instance=ExtResource("3")]
-position = Vector2(500, 100)
-
-[node name="CookingLabel" type="Label" parent="ProcessingSection"]
-text = "Cuire"
-position = Vector2(500, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="PlateStation" parent="ProcessingSection" instance=ExtResource("4")]
-position = Vector2(600, 100)
-
-[node name="PlateLabel" type="Label" parent="ProcessingSection"]
-text = "Plateau"
-position = Vector2(600, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="RenduStation" parent="ProcessingSection" instance=ExtResource("2")]
-position = Vector2(700, 100)
-item_type = "rendu"
-
-[node name="RenduLabel" type="Label" parent="ProcessingSection"]
-text = "Table"
-position = Vector2(700, 140)
-size = Vector2(80, 20)
-horizontal_alignment = 1
-
-[node name="RecipesSection" type="Node2D" parent="."]
-
-[node name="RecipesLabel" type="Label" parent="RecipesSection"]
-text = "RECETTES"
-position = Vector2(350, 200)
-size = Vector2(200, 30)
-horizontal_alignment = 1
-
-[node name="PizzaRecipe" type="ColorRect" parent="RecipesSection"]
-color = Color(0.2, 0.2, 0.2, 1)
-position = Vector2(300, 250)
-size = Vector2(200, 40)
-
-[node name="PizzaText" type="Label" parent="RecipesSection/PizzaRecipe"]
-text = "Pizza (dough, tomato, cheese)"
-position = Vector2(10, 10)
-size = Vector2(180, 20)
-horizontal_alignment = 1
-
-[node name="FunghiRecipe" type="ColorRect" parent="RecipesSection"]
-color = Color(0.2, 0.2, 0.2, 1)
-position = Vector2(300, 300)
-size = Vector2(200, 40)
-
-[node name="FunghiText" type="Label" parent="RecipesSection/FunghiRecipe"]
-text = "Funghi (dough, tomato, mushroom)"
-position = Vector2(10, 10)
-size = Vector2(180, 20)
-horizontal_alignment = 1
-
-[node name="Assembly" parent="." instance=ExtResource("5")]
-position = Vector2(400, 300)
+[node name="RenduStation" parent="." instance=ExtResource("6")]
+position = Vector2(590, 271)
 
 [connection signal="pressed" from="UI/Menu/BtnPizza" to="." method="_on_btn_pizza_pressed"]
 [connection signal="pressed" from="UI/Menu/BtnFunghi" to="." method="_on_btn_funghi_pressed"]
+[connection signal="pressed" from="UI/RecipesRight/BtnPizzaOverlay" to="." method="_on_btn_pizza_pressed"]
+[connection signal="pressed" from="UI/RecipesRight/BtnFunghiOverlay" to="." method="_on_btn_funghi_pressed"]

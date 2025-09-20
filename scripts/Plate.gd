@@ -1,36 +1,46 @@
 extends Node2D
 
-var held_food: Node2D = null
+var held_foods: Array[Node2D] = []
+var deposited_ingredients: Array[String] = []
+var is_cooked: bool = false
 
 func is_plate() -> bool:
 	return true
 
-func has_food() -> bool:
-	return held_food != null
-
 func try_place_food(food: Node2D) -> bool:
-	if held_food != null or food == null:
+	if not food:
 		return false
-	# Accepte seulement un item cuit (et éventuellement coupé)
-	if food.has_method("get_display_name"):
-		var name: String = food.get_display_name()
-		if "cuit" in name:
-			held_food = food
-			food.reparent(self)
-			food.position = Vector2(0, -6)
-			return true
-	return false
+	held_foods.append(food)
+	food.reparent(self)
+	food.position = Vector2(0, -6) + Vector2(randf_range(-10, 10), randf_range(-10, 10))
+	deposited_ingredients.append(food.get_display_name())
+	return true
 
 func is_empty() -> bool:
-	return held_food == null
+	return held_foods.size() == 0 and not is_cooked
 
-func take_food() -> Node2D:
-	var f := held_food
-	held_food = null
-	return f
+func cook_plate() -> void:
+	_clear_ingredients()
+	_create_cooked_sprite()
+
+func _clear_ingredients() -> void:
+	for food in held_foods:
+		food.queue_free()
+	held_foods.clear()
+	deposited_ingredients.clear()
+	is_cooked = true
+
+func _create_cooked_sprite() -> void:
+	var cooked_sprite = Sprite2D.new()
+	var texture = load("res://icon.svg")
+	cooked_sprite.texture = texture
+	cooked_sprite.scale = Vector2(0.5, 0.5)
+	cooked_sprite.position = Vector2(0, -6)
+	add_child(cooked_sprite)
 
 func get_display_name() -> String:
-	if held_food != null and held_food.has_method("get_display_name"):
-		return "assiette (" + held_food.get_display_name() + ")"
+	if is_cooked:
+		return "🍕 Pizza cuite"
+	if deposited_ingredients.size() > 0:
+		return "assiette (" + ", ".join(deposited_ingredients) + ")"
 	return "assiette (vide)"
-

@@ -1,7 +1,6 @@
 extends Node2D
 
 @export var cut_duration: float = 1.5
-
 var is_cutting: bool = false
 var current_item: Node2D = null
 
@@ -11,22 +10,26 @@ var current_item: Node2D = null
 func try_use_station(player: Node) -> void:
 	if is_cutting:
 		return
-	if current_item == null and player != null and player.has_method("get"):
-		if player.get("held_item") != null:
-			var held_item = player.get("held_item") as Node2D
-			if held_item.has_method("get_display_name") and "coupé" in held_item.get_display_name():
-				return
-			current_item = held_item
-			(player as Node).set("held_item", null)
-			current_item.reparent(self)
-			current_item.position = Vector2.ZERO
-			_start_cut()
-	elif current_item != null and player.get("held_item") == null:
-		if not is_cutting:
-			current_item.reparent(player)
-			current_item.position = (player as Node2D).position + Vector2(0, -16)
-			player.set("held_item", current_item)
-			current_item = null
+	if current_item == null and player.held_item != null:
+		_take_item_from_player(player)
+	elif current_item != null and player.held_item == null:
+		_give_item_to_player(player)
+
+func _take_item_from_player(player: Node) -> void:
+	var held_item = player.held_item
+	if "coupé" in held_item.get_display_name():
+		return
+	current_item = held_item
+	player.held_item = null
+	current_item.reparent(self)
+	current_item.position = Vector2.ZERO
+	_start_cut()
+
+func _give_item_to_player(player: Node) -> void:
+	current_item.reparent(player)
+	current_item.position = player.position + Vector2(0, -16)
+	player.held_item = current_item
+	current_item = null
 
 func _start_cut() -> void:
 	is_cutting = true
@@ -36,11 +39,10 @@ func _start_cut() -> void:
 
 func _process(delta: float) -> void:
 	if is_cutting and timer.time_left > 0.0:
-		var t: float = 1.0 - (timer.time_left / cut_duration)
-		progress.value = t
+		progress.value = 1.0 - (timer.time_left / cut_duration)
 
 func _on_Timer_timeout() -> void:
 	is_cutting = false
 	progress.visible = false
-	if current_item and current_item.has_method("mark_cut"):
-		current_item.call("mark_cut") 
+	if current_item:
+		current_item.mark_cut() 

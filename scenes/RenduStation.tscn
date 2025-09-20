@@ -16,6 +16,7 @@ height = 64
 
 [node name="RenduStation" type="Node2D"]
 script = ExtResource("1")
+groups = ["rendu"]
 
 [node name="InteractArea" type="Area2D" parent="."]
 monitoring = true
@@ -30,5 +31,5 @@ scale = Vector2(0.4, 0.4)
 
 [node name="Label" type="Label" parent="."]
 text = "RENDU"
-position = Vector2(-20, -30)
+position = Vector2(-25, -30)
 scale = Vector2(0.5, 0.5)

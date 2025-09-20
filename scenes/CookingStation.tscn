@@ -42,7 +42,7 @@ scale = Vector2(0.4, 0.4)
 
 [node name="Label" type="Label" parent="."]
 text = "CUISSON"
-position = Vector2(-25, -30)
+position = Vector2(-30, -30)
 scale = Vector2(0.5, 0.5)
 
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

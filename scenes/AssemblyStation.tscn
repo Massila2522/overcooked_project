@@ -26,4 +26,9 @@ shape = SubResource("1")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 texture = SubResource("3")
-scale = Vector2(0.2, 0.2) 
+scale = Vector2(0.2, 0.2)
+
+[node name="Label" type="Label" parent="."]
+text = "ASSEMBLAGE"
+position = Vector2(-40, -30)
+scale = Vector2(0.5, 0.5) 

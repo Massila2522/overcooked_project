@@ -18,31 +18,35 @@ func get_needed_type() -> String:
 	return ""
 
 func try_use_station(player: Node) -> void:
-	if player == null or not player.has_method("get"):
+	if not player:
 		return
 	if pizza_ready:
-		pizza_ready = false
-		collected.clear()
-		_update_visual()
-		_get_main().show_message("Plan remis à zéro")
+		_reset_assembly()
 		return
-	var held = player.get("held_item") as Node
-	if held == null:
+	var held_item = player.held_item
+	if not held_item or held_item.item_type != get_needed_type():
 		return
-	var t: String = held.get("item_type") if held.has_method("get") else ""
-	if t == get_needed_type():
-		held.queue_free()
-		player.set("held_item", null)
-		collected.append(t)
-		_get_main().show_message("Ingrédient %s accepté (%d/%d)" % [t, collected.size(), required_sequence.size()])
-		if collected.size() == required_sequence.size():
-			pizza_ready = true
-			_get_main().show_message("%s prêt !" % dish_name)
-		else:
-			# Signal to player that ingredient was accepted and it should continue
-			if player.has_method("on_ingredient_accepted"):
-				player.call("on_ingredient_accepted")
-		_update_visual()
+	_accept_ingredient(player, held_item)
+
+func _reset_assembly() -> void:
+	pizza_ready = false
+	collected.clear()
+	_update_visual()
+	_get_main().show_message("Plan remis à zéro")
+
+func _accept_ingredient(player: Node, item: Node2D) -> void:
+	item.queue_free()
+	player.held_item = null
+	collected.append(item.item_type)
+	_get_main().show_message("Ingrédient %s accepté (%d/%d)" % [item.item_type, collected.size(), required_sequence.size()])
+	
+	if collected.size() == required_sequence.size():
+		pizza_ready = true
+		_get_main().show_message("%s prêt !" % dish_name)
+	else:
+		player.on_ingredient_accepted()
+	
+	_update_visual()
 
 func _update_visual() -> void:
 	var spr: Sprite2D = $Sprite
