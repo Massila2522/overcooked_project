@@ -46,7 +46,7 @@ func _handle_ingredient_placement(player: Node, item: Node2D) -> void:
 			_start_cooking()
 
 func _can_give_plate() -> bool:
-	return plate != null and not plate.is_empty() and not is_cooking and plate.is_cooked
+	return plate != null and plate.is_cooked and not is_cooking
 
 func _give_plate_to_player(player: Node) -> void:
 	plate.reparent(player)

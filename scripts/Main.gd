@@ -5,7 +5,6 @@ const PlayerScene: PackedScene = preload("res://scenes/Player.tscn")
 var player: Node2D
 var recipe_manager: RecipeManager
 
-@onready var message_label: Label = $MessageLabel
 @onready var status_label: Label = $Label
 
 func _ready() -> void:

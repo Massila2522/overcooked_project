@@ -15,24 +15,16 @@ func get_ingredient() -> Ingredient:
 	return ingredient
 
 func mark_cut() -> bool:
-	if not ingredient:
-		return false
-	return ingredient.cut()
+	return ingredient and ingredient.cut()
 
 func mark_cooked() -> bool:
-	if not ingredient:
-		return false
-	return ingredient.cook()
+	return ingredient and ingredient.cook()
 
 func get_display_name() -> String:
-	if not ingredient:
-		return item_type
-	return ingredient.display_name
+	return ingredient.display_name if ingredient else item_type
 
 func get_item_type() -> String:
-	if not ingredient:
-		return item_type
-	return ingredient.base_type
+	return ingredient.base_type if ingredient else item_type
 
 func is_same_as(other_ingredient: Ingredient) -> bool:
 	if not ingredient or not other_ingredient:

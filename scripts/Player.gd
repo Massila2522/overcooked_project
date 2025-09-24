@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 @export var speed: float = 200.0
 @export var autonomous: bool = true
+@export var use_goap: bool = true
 
 var held_item: Node2D = null
 var current_recipe: Recipe = null
@@ -13,10 +14,21 @@ var target_set: bool = false
 var start_position: Vector2 = Vector2.ZERO
 var has_delivered: bool = false
 
+var goap_agent: GoapAgent = GoapAgent.new()
+
+func _ready() -> void:
+	if use_goap:
+		goap_agent.setup(self)
+		if has_node("../Label"):
+			goap_agent.goal_added.connect(func(t: String): ($"../Label" as Label).text = t)
+			goap_agent.subgoal_enqueued.connect(func(t: String): ($"../Label" as Label).text = t)
+
 func start_ai() -> void:
 	ai_enabled = true
 	start_position = global_position
 	has_delivered = false
+	if use_goap and current_recipe != null:
+		goap_agent.start(current_recipe)
 
 func on_ingredient_accepted() -> void:
 	pass
@@ -38,7 +50,11 @@ func is_ingredient_required(ingredient_type: String) -> bool:
 
 func _physics_process(delta: float) -> void:
 	if autonomous and ai_enabled:
-		_autonomous_move(delta)
+		if use_goap:
+			goap_agent.tick()
+		else:
+			_refresh_autonomous_target()
+		_move(delta)
 	else:
 		var input_vector: Vector2 = Vector2(
 			Input.get_action_strength("move_right") - Input.get_action_strength("move_left"),
@@ -66,20 +82,27 @@ func _use_station() -> void:
 		owner.try_use_station(self)
 		return
 
-func _autonomous_move(delta: float) -> void:
+func _refresh_autonomous_target() -> void:
 	var new_target = _get_target_position()
 	if not target_set or current_target.distance_to(new_target) > 10.0:
 		current_target = new_target
 		target_set = true
-	
+
+func _move(delta: float) -> void:
+	if not target_set:
+		velocity = Vector2.ZERO
+		return
 	var distance = global_position.distance_to(current_target)
-	
 	if distance < 20.0:
 		velocity = Vector2.ZERO
 		_auto_try_use()
-	else:
-		velocity = (current_target - global_position).normalized() * speed
-		move_and_slide()
+		return
+	velocity = (current_target - global_position).normalized() * speed
+	move_and_slide()
+
+func set_goap_target(pos: Vector2) -> void:
+	current_target = pos
+	target_set = true
 
 func _get_target_position() -> Vector2:
 	if not current_recipe or step_index >= current_recipe.get_ingredient_count():
