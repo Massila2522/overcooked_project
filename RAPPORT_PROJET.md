@@ -101,15 +101,19 @@ overcooked_project/
 │   ├── Player.tscn       # Joueur/Agent IA
 │   ├── Item.tscn         # Objets ramassables
 │   ├── SourceStation.tscn # Sources d'ingrédients
-│   ├── TableStation.tscn # Tables de travail
-│   └── AssemblyStation.tscn # Station d'assemblage
+│   ├── CuttingStation.tscn # Station de découpage
+│   ├── CookingStation.tscn # Station de cuisson
+│   ├── PlateStation.tscn # Station d'assiettes
+│   └── RenduStation.tscn # Station de livraison
 ├── scripts/              # Scripts GDScript
 │   ├── Main.gd          # Contrôleur principal
 │   ├── Player.gd        # Logique de l'agent IA
 │   ├── Item.gd          # Propriétés des objets
 │   ├── SourceStation.gd # Logique des sources
-│   ├── TableStation.gd  # Logique des tables
-│   └── AssemblyStation.gd # Logique d'assemblage
+│   ├── CuttingStation.gd # Logique de découpage
+│   ├── CookingStation.gd # Logique de cuisson
+│   ├── PlateStation.gd # Logique des assiettes
+│   └── RenduStation.gd # Logique de livraison
 └── icon.svg             # Icône du projet
 ```
 
@@ -139,7 +143,7 @@ overcooked_project/
 
 ### 4. Progression des Recettes
 **Problème** : L'agent s'arrêtait après le premier ingrédient
-**Solution** : Système de callbacks entre AssemblyStation et Player
+**Solution** : Système de callbacks entre RenduStation et Player
 **Impact** : Exécution complète des recettes multi-étapes
 
 ### 5. Messages d'Interface

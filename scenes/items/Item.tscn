@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://dm518a07uhgp1"]
+
+[ext_resource type="Script" uid="uid://d37l3qhuqv2bi" path="res://scripts/items/Item.gd" id="1"]
+[ext_resource type="Script" uid="uid://bqk45qkpi84rd" path="res://scripts/items/PickupArea.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://dh3dg6j0lp1y7" path="res://sprites/ingredients/tomato_raw.png" id="2_we3um"]
+
+[sub_resource type="RectangleShape2D" id="1"]
+size = Vector2(14, 14)
+
+[node name="Item" type="RigidBody2D"]
+freeze = true
+script = ExtResource("1")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+scale = Vector2(0.43749997, 0.43749997)
+texture = ExtResource("2_we3um")
+
+[node name="PickupArea" type="Area2D" parent="."]
+script = ExtResource("2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PickupArea"]
+shape = SubResource("1")

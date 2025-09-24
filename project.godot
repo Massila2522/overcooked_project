@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="OvercookedLike"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="uid://d26v6eiwtxilg"
 config/features=PackedStringArray("4.5")
 
 [input]
@@ -114,3 +114,7 @@ recipe_2={
 "type": "InputEventKey"
 }]
 }
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
