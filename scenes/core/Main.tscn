@@ -45,19 +45,6 @@ offset_top = 28.0
 offset_right = 300.0
 offset_bottom = 120.0
 
-[node name="BtnPizza" type="Button" parent="UI/Menu"]
-layout_mode = 0
-offset_right = 280.0
-offset_bottom = 28.0
-text = "Pizza (dough, tomato, cheese)"
-
-[node name="BtnFunghi" type="Button" parent="UI/Menu"]
-layout_mode = 0
-offset_top = 36.0
-offset_right = 280.0
-offset_bottom = 64.0
-text = "Funghi (dough, tomato, mushroom)"
-
 [node name="RecipesRight" type="Control" parent="UI"]
 layout_mode = 3
 anchors_preset = 0
@@ -65,36 +52,6 @@ offset_left = 680.0
 offset_top = 40.0
 offset_right = 1100.0
 offset_bottom = 200.0
-
-[node name="PizzaRecipe" type="ColorRect" parent="UI/RecipesRight"]
-layout_mode = 0
-offset_right = 360.0
-offset_bottom = 60.0
-color = Color(0, 0, 0, 1)
-
-[node name="BtnPizzaOverlay" type="Button" parent="UI/RecipesRight"]
-layout_mode = 0
-offset_right = 360.0
-offset_bottom = 60.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Pizza (dough, tomato, cheese)"
-flat = true
-
-[node name="FunghiRecipe" type="ColorRect" parent="UI/RecipesRight"]
-layout_mode = 0
-offset_top = 70.0
-offset_right = 360.0
-offset_bottom = 130.0
-color = Color(0, 0, 0, 1)
-
-[node name="BtnFunghiOverlay" type="Button" parent="UI/RecipesRight"]
-layout_mode = 0
-offset_top = 70.0
-offset_right = 360.0
-offset_bottom = 130.0
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Funghi (dough, tomato, mushroom)"
-flat = true
 
 [node name="Source_dough" parent="." instance=ExtResource("2")]
 position = Vector2(100, 100)
@@ -130,8 +87,3 @@ position = Vector2(500, 250)
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(277, 154)
 zoom = Vector2(2.1, 2.1)
-
-[connection signal="pressed" from="UI/Menu/BtnPizza" to="." method="_on_btn_pizza_pressed"]
-[connection signal="pressed" from="UI/Menu/BtnFunghi" to="." method="_on_btn_funghi_pressed"]
-[connection signal="pressed" from="UI/RecipesRight/BtnPizzaOverlay" to="." method="_on_btn_pizza_pressed"]
-[connection signal="pressed" from="UI/RecipesRight/BtnFunghiOverlay" to="." method="_on_btn_funghi_pressed"]
