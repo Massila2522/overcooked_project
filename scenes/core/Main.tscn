@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cl5hq3pke524u" path="res://scenes/stations/CookingStation.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://cjl12db6w1n7x" path="res://scenes/stations/PlateStation.tscn" id="5"]
 [ext_resource type="PackedScene" uid="uid://by3h4ewgmfyfr" path="res://scenes/stations/RenduStation.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://dfgcdktbf3wyx" path="res://scenes/stations/AssemblyStation.tscn" id="7"]
 
 [sub_resource type="NavigationPolygon" id="1001"]
 vertices = PackedVector2Array(0, 0, 1024, 0, 1024, 600, 0, 600)
@@ -80,6 +81,9 @@ position = Vector2(300, 250)
 
 [node name="PlateStation" parent="." instance=ExtResource("5")]
 position = Vector2(400, 250)
+
+[node name="AssemblyStation" parent="." instance=ExtResource("7")]
+position = Vector2(350, 250)
 
 [node name="RenduStation" parent="." instance=ExtResource("6")]
 position = Vector2(500, 250)

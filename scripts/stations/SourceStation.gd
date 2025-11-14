@@ -12,7 +12,7 @@ func _ready() -> void:
 func try_use_station(player: Node) -> void:
 	if is_empty or player.held_item != null:
 		return
-	if not player.is_ingredient_required(item_type):
+	if not _can_player_take_item(player):
 		return
 	_give_item_to_player(player)
 
@@ -31,3 +31,12 @@ func _give_item_to_player(player: Node) -> void:
 
 func _get_main() -> Node:
 	return get_tree().get_first_node_in_group("root")
+
+func _can_player_take_item(player: Node) -> bool:
+	if not player:
+		return false
+	if player.has_method("can_collect_from_source"):
+		return player.can_collect_from_source(item_type)
+	if player.has_method("is_ingredient_required"):
+		return player.is_ingredient_required(item_type)
+	return false

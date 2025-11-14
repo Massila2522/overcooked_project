@@ -1,3 +1,8 @@
-res://scripts/core/Main.gd
 res://scripts/player/Player.gd
-res://scenes/core/Main.tscn
+res://scripts/ai/Goap.gd
+res://scripts/core/Main.gd
+res://scripts/stations/AssemblyStation.gd
+res://scripts/ai/Blackboard.gd
+res://scripts/stations/SourceStation.gd
+res://scripts/stations/CookingStation.gd
+res://scripts/stations/PlateStation.gd

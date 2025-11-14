@@ -2,7 +2,14 @@ extends CharacterBody2D
 
 signal recipe_completed
 
+enum AgentRole {
+	RUNNER,    # Coureur - ramasse les ingrédients
+	CUTTER,    # Découpeur - découpe et cuit
+	ASSEMBLER  # Assembleur - assemble et sert
+}
+
 @export var speed: float = 200.0
+@export var agent_role: AgentRole = AgentRole.RUNNER
 
 # État du joueur
 var held_item: Node2D = null
@@ -16,26 +23,47 @@ var current_target: Vector2 = Vector2.ZERO
 var target_set: bool = false
 var goap_agent: Node = null
 var nav: NavigationAgent2D
+var blackboard: Blackboard = null
 
 # Évitement d'obstacles
 var target_node: Node = null
 var target_obstacle_prev_enabled: bool = true
 
+# Label pour afficher le rôle
+@onready var role_label: Label = $RoleLabel
+
 func _ready() -> void:
+	# Trouver la blackboard
+	var main = get_tree().get_first_node_in_group("root")
+	if main and main.has_node("Blackboard"):
+		blackboard = main.get_node("Blackboard")
+	
 	# Configuration GOAP
 	goap_agent = preload("res://scripts/ai/Goap.gd").new()
-	goap_agent.setup(self)
-	goap_agent.goal_added.connect(func(t: String): ($"../Label" as Label).text = t)
-	goap_agent.subgoal_enqueued.connect(func(t: String): ($"../Label" as Label).text = t)
+	goap_agent.setup(self, agent_role)
+	goap_agent.goal_added.connect(func(t: String): ($"../Label" as Label).text = t if has_node("../Label") else null)
+	goap_agent.subgoal_enqueued.connect(func(t: String): ($"../Label" as Label).text = t if has_node("../Label") else null)
 	
 	# Configuration navigation
 	nav = $NavigationAgent2D
 	nav.velocity_computed.connect(_on_velocity_computed)
+	
+	# Configuration du label de rôle
+	_setup_role_label()
 
 func start_ai() -> void:
 	has_delivered = false
 	if current_recipe != null:
 		goap_agent.start(current_recipe)
+	
+	# Démarrer l'IA selon le rôle
+	match agent_role:
+		AgentRole.RUNNER:
+			goap_agent.start_runner_ai()
+		AgentRole.CUTTER:
+			goap_agent.start_cutter_ai()
+		AgentRole.ASSEMBLER:
+			goap_agent.start_assembler_ai()
 
 # Callbacks pour les stations
 func on_ingredient_accepted() -> void:
@@ -56,6 +84,16 @@ func is_ingredient_required(ingredient_type: String) -> bool:
 		return false
 	var needed_ingredient = current_recipe.get_ingredient_at(step_index)
 	return needed_ingredient != null and needed_ingredient.base_type == ingredient_type
+
+func can_collect_from_source(ingredient_type: String) -> bool:
+	if current_recipe == null:
+		return false
+	if agent_role == AgentRole.RUNNER:
+		for ing in current_recipe.ingredients:
+			if ing.base_type == ingredient_type:
+				return true
+		return false
+	return is_ingredient_required(ingredient_type)
 
 # Boucle principale
 func _physics_process(delta: float) -> void:
@@ -105,6 +143,25 @@ func _restore_target_obstacle() -> void:
 		var obs: Node = target_node.get_node("NavObstacle")
 		obs.avoidance_enabled = target_obstacle_prev_enabled
 		target_node = null
+
+func _setup_role_label() -> void:
+	# Créer le label si il n'existe pas
+	if not has_node("RoleLabel"):
+		var label = Label.new()
+		label.name = "RoleLabel"
+		add_child(label)
+		role_label = label
+	
+	# Configurer le label selon le rôle
+	var role_names = {
+		AgentRole.RUNNER: "COUREUR",
+		AgentRole.CUTTER: "DÉCOUPEUR",
+		AgentRole.ASSEMBLER: "ASSEMBLEUR"
+	}
+	
+	role_label.text = role_names.get(agent_role, "AGENT")
+	role_label.position = Vector2(-role_label.text.length() * 3, -40)
+	role_label.add_theme_font_size_override("font_size", 12)
 
 # Utilitaires
 func _has_cooked_plate() -> bool:
