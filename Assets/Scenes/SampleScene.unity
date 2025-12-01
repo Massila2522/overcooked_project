@@ -766,7 +766,6 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3383,7 +3382,7 @@ Transform:
   m_GameObject: {fileID: 738460396}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.67, y: 5.53, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3402,7 +3401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  agentLabel: Agent 3
+  agentLabel: Cyril Lignac (Cutting)
   labelYOffset: -0.6
   labelColor: {r: 1, g: 1, b: 1, a: 1}
   labelFontSize: 16
@@ -3489,7 +3488,7 @@ Transform:
   m_GameObject: {fileID: 812792715}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.6, y: 5.53, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3504,11 +3503,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 812792715}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f16155315c07834eaebbf1330d53198, type: 3}
+  m_Script: {fileID: 11500000, guid: 87eb4b67bd685d54682b0714ece5d348, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  agentLabel: Agent 4
+  agentLabel: Philippe Etchebest (Dressing)
   labelYOffset: -0.6
   labelColor: {r: 1, g: 1, b: 1, a: 1}
   labelFontSize: 16
@@ -3892,7 +3891,7 @@ Transform:
   m_GameObject: {fileID: 1091839489}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.53, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3911,7 +3910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  agentLabel: Agent 1
+  agentLabel: Pierre Gagnaire (Ingredient Provider)
   labelYOffset: -0.6
   labelColor: {r: 1, g: 1, b: 1, a: 1}
   labelFontSize: 16
@@ -4202,7 +4201,7 @@ Transform:
   m_GameObject: {fileID: 1306147017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.73, y: 5.53, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4221,7 +4220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  agentLabel: Agent 2
+  agentLabel: Michel Dumas (Cutting)
   labelYOffset: -0.6
   labelColor: {r: 1, g: 1, b: 1, a: 1}
   labelFontSize: 16
@@ -4422,6 +4421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a87a7054b603b946bb68134bea4bd5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  plateAnchor: {fileID: 0}
+  ingredientStackOffset: 0.05
 --- !u!212 &1620833229
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4882,6 +4883,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a87a7054b603b946bb68134bea4bd5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  plateAnchor: {fileID: 0}
+  ingredientStackOffset: 0.05
 --- !u!1 &1964314627
 GameObject:
   m_ObjectHideFlags: 0
@@ -5051,7 +5054,7 @@ Transform:
   m_GameObject: {fileID: 2003793334}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.66, y: 5.53, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5066,11 +5069,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2003793334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f16155315c07834eaebbf1330d53198, type: 3}
+  m_Script: {fileID: 11500000, guid: 87eb4b67bd685d54682b0714ece5d348, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  agentLabel: Agent 5
+  agentLabel: Gordon Ramsey (Dressing)
   labelYOffset: -0.6
   labelColor: {r: 1, g: 1, b: 1, a: 1}
   labelFontSize: 16

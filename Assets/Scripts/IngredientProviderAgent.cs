@@ -69,56 +69,15 @@ public class IngredientProviderAgent : Agent
 
         PickUpIngredient(ingredient);
 
-        // Vérifier si l'ingrédient a besoin d'être découpé
-        bool needsCutting = ingredient.NeedsCutting();
-
-        if (!needsCutting)
+        bool requiresProcessing = ingredient.NeedsCutting() || ingredient.NeedsCooking();
+        if (!requiresProcessing)
         {
-            // L'ingrédient n'a pas besoin d'être découpé, le mettre directement dans l'assiette
-            // Trouver l'assiette correspondante à cette recette
-            PlateStation plateStation = PlateStation.FindPlateStationForRecipe(item.RecipeId);
-            
-            if (plateStation != null)
-            {
-                // Aller à la station d'assiette
-                MoveTo(plateStation.transform);
-                yield return new WaitUntil(() => !isMoving);
-
-                // Ajouter l'ingrédient directement dans l'assiette
-                if (plateStation.AddIngredient(ingredient))
-                {
-                    DropIngredient();
-                }
-            }
-            else
-            {
-                // Pas d'assiette trouvée, attendre un peu
-                DropIngredient();
-                yield return new WaitForSeconds(0.5f);
-            }
+            yield return StartCoroutine(DeliverIngredientDirectly(ingredient, item.RecipeId));
         }
         else
         {
-            // L'ingrédient doit être découpé, le poser sur une station de découpage
-            CuttingStation freeStation = FindFreeCuttingStation();
-            if (freeStation == null)
-            {
-                // Attendre qu'une place se libère
-                yield return new WaitUntil(() => FindFreeCuttingStation() != null);
-                freeStation = FindFreeCuttingStation();
-            }
-
-            // Aller à la place de découpage
-            MoveTo(freeStation.transform);
-            yield return new WaitUntil(() => !isMoving);
-
-            // Poser l'ingrédient sur la station de découpage
-            if (freeStation.PlaceIngredient(ingredient))
-            {
-                DropIngredient();
-            }
+            yield return StartCoroutine(PlaceIngredientOnCuttingStation(ingredient));
         }
-
         yield return new WaitForSeconds(0.1f);
     }
 
@@ -144,6 +103,68 @@ public class IngredientProviderAgent : Agent
             }
         }
         return null;
+    }
+
+    private IEnumerator PlaceIngredientOnCuttingStation(Ingredient ingredient)
+    {
+        if (ingredient == null)
+        {
+            yield break;
+        }
+
+        bool placed = false;
+        while (!placed)
+        {
+            CuttingStation targetStation = FindFreeCuttingStation();
+            while (targetStation == null)
+            {
+                currentState = AgentState.Waiting;
+                yield return new WaitForSeconds(0.1f);
+                targetStation = FindFreeCuttingStation();
+            }
+
+            MoveTo(targetStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+
+            placed = targetStation.PlaceIngredient(ingredient);
+            if (!placed)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        DropIngredient();
+    }
+
+    private IEnumerator DeliverIngredientDirectly(Ingredient ingredient, int recipeId)
+    {
+        if (ingredient == null)
+        {
+            yield break;
+        }
+
+        bool delivered = false;
+        while (!delivered)
+        {
+            PlateStation plateStation = PlateStation.FindPlateStationForRecipe(recipeId);
+            if (plateStation == null)
+            {
+                currentState = AgentState.Waiting;
+                yield return new WaitForSeconds(0.1f);
+                continue;
+            }
+
+            MoveTo(plateStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+
+            delivered = plateStation.AddIngredient(ingredient);
+            if (!delivered)
+            {
+                yield return new WaitForSeconds(0.1f);
+            }
+        }
+
+        DropIngredient();
     }
 }
 

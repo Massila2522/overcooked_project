@@ -226,15 +226,15 @@ public class DressingAgent : Agent
             DropPlate();
         }
 
-        // Créer et prendre l'assiette
-        GameObject plate = GetPlate();
-        while (plate == null)
+        // Aller chercher une assiette à la station de vaisselle
+        GameObject plate = null;
+        yield return StartCoroutine(FetchPlateFromVaisselle(fetchedPlate => plate = fetchedPlate));
+        if (plate == null)
         {
             yield return new WaitForSeconds(0.1f);
-            plate = GetPlate();
+            onPlatePlaced?.Invoke(null);
+            yield break;
         }
-
-        PickUpPlate(plate);
 
         // Aller à la station
         MoveTo(freeStation.transform);
@@ -316,12 +316,13 @@ public class DressingAgent : Agent
         for (int i = 0; i < 3; i++)
         {
             IngredientType neededType = recipe.RequiredIngredients[i];
-            Ingredient ingredient = GetCutIngredient(neededType, recipe.Order);
-
-            while (ingredient == null)
+            Ingredient ingredient = null;
+            yield return StartCoroutine(FetchCutIngredient(neededType, recipe.Order, fetched => ingredient = fetched));
+            if (ingredient == null)
             {
                 yield return new WaitForSeconds(0.1f);
-                ingredient = GetCutIngredient(neededType, recipe.Order);
+                i--;
+                continue;
             }
 
             // S'assurer qu'on ne porte rien
@@ -403,12 +404,11 @@ public class DressingAgent : Agent
             }
             else
             {
-                // Récupérer l'ingrédient découpé
-                Ingredient ingredient = GetCutIngredient(neededType, recipe.Order);
-                while (ingredient == null)
+                Ingredient ingredient = null;
+                yield return StartCoroutine(FetchCutIngredient(neededType, recipe.Order, fetched => ingredient = fetched));
+                if (ingredient == null)
                 {
-                    yield return new WaitForSeconds(0.1f);
-                    ingredient = GetCutIngredient(neededType, recipe.Order);
+                    continue;
                 }
 
                 // S'assurer qu'on ne porte rien
@@ -438,11 +438,12 @@ public class DressingAgent : Agent
             yield break;
         }
 
-        Ingredient meat = GetCutIngredient(IngredientType.Meat, recipe.Order);
+        Ingredient meat = null;
+        yield return StartCoroutine(FetchCutIngredient(IngredientType.Meat, recipe.Order, fetched => meat = fetched));
         while (meat == null || meat.State != IngredientState.Chopped)
         {
-            yield return null;
-            meat = GetCutIngredient(IngredientType.Meat, recipe.Order);
+            yield return new WaitForSeconds(0.1f);
+            yield return StartCoroutine(FetchCutIngredient(IngredientType.Meat, recipe.Order, fetched => meat = fetched));
         }
 
         CookingStation station = FindFreeCookingStation();
@@ -489,52 +490,122 @@ public class DressingAgent : Agent
         onCooked?.Invoke(cookedMeat);
     }
 
-    private Ingredient GetCutIngredient(IngredientType type, int recipeId)
+    private IEnumerator FetchCutIngredient(IngredientType type, int recipeId, Action<Ingredient> onFetched)
+    {
+        Ingredient fetched = null;
+        while (fetched == null)
+        {
+            CutIngredientsStation targetStation = FindCutStationWithIngredient(type, recipeId);
+            while (targetStation == null)
+            {
+                currentState = AgentState.Waiting;
+                yield return new WaitForSeconds(0.1f);
+                targetStation = FindCutStationWithIngredient(type, recipeId);
+            }
+
+            MoveTo(targetStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+
+            Ingredient candidate = targetStation.TakeIngredientOfTypeForRecipe(type, recipeId);
+            if (candidate == null)
+            {
+                yield return new WaitForSeconds(0.05f);
+                continue;
+            }
+
+            bool ready = candidate.State == IngredientState.Cut || candidate.State == IngredientState.Chopped;
+            if (type == IngredientType.BurgerBun)
+            {
+                ready = true;
+            }
+
+            if (!ready)
+            {
+                Debug.LogWarning($"Ingrédient {candidate.Type} récupéré dans un état inattendu ({candidate.State}).");
+                continue;
+            }
+
+            fetched = candidate;
+        }
+
+        currentState = AgentState.Idle;
+        onFetched?.Invoke(fetched);
+    }
+
+    private CutIngredientsStation FindCutStationWithIngredient(IngredientType type, int recipeId)
     {
         foreach (CutIngredientsStation station in cutIngredientsStations)
         {
             if (station.HasIngredientOfTypeForRecipe(type, recipeId))
             {
-                Ingredient ingredient = station.TakeIngredientOfTypeForRecipe(type, recipeId);
-                if (ingredient == null)
-                {
-                    continue;
-                }
-
-                bool isReady = ingredient.State == IngredientState.Cut || ingredient.State == IngredientState.Chopped;
-
-                if (type == IngredientType.BurgerBun)
-                {
-                    // Les pains n'ont pas besoin d'être coupés
-                    isReady = true;
-                }
-
-                if (isReady)
-                {
-                    return ingredient;
-                }
+                return station;
             }
         }
+
         return null;
     }
 
-    private GameObject GetPlate()
+    private IEnumerator FetchPlateFromVaisselle(System.Action<GameObject> onFetched)
     {
-        // Créer une assiette depuis le sprite (override ou SpriteManager)
+        GameObject station = FindAvailableVaisselleStation();
+        while (station == null)
+        {
+            currentState = AgentState.Waiting;
+            yield return new WaitForSeconds(0.1f);
+            station = FindAvailableVaisselleStation();
+        }
+
+        MoveTo(station.transform);
+        yield return new WaitUntil(() => !isMoving);
+
+        GameObject plate = CreatePlateObject();
+        if (plate != null)
+        {
+            PickUpPlate(plate);
+        }
+
+        onFetched?.Invoke(plate);
+    }
+
+    private GameObject FindAvailableVaisselleStation()
+    {
+        if (vaisselleStations == null || vaisselleStations.Length == 0)
+        {
+            return null;
+        }
+
+        // simple round-robin: retourner la station la plus proche disponible
+        GameObject closest = null;
+        float bestDist = float.MaxValue;
+        foreach (GameObject station in vaisselleStations)
+        {
+            if (station == null) continue;
+            float dist = Vector2.Distance(transform.position, station.transform.position);
+            if (dist < bestDist)
+            {
+                bestDist = dist;
+                closest = station;
+            }
+        }
+        return closest;
+    }
+
+    private GameObject CreatePlateObject()
+    {
         Sprite plateSprite = plateSpriteOverride;
-        
+
         if (plateSprite == null && IngredientSpriteManager.Instance != null)
         {
             plateSprite = IngredientSpriteManager.Instance.GetUtensilSprite("assiette");
         }
-        
+
         if (plateSprite != null)
         {
             GameObject plate = new GameObject("Assiette");
             SpriteRenderer sr = plate.AddComponent<SpriteRenderer>();
             sr.sprite = plateSprite;
-            sr.sortingOrder = 2; // Même sortingOrder que les ingrédients
-            plate.SetActive(true); // S'assurer que l'assiette est visible
+            sr.sortingOrder = 2;
+            plate.SetActive(true);
             return plate;
         }
         else

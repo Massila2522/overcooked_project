@@ -78,11 +78,30 @@ public class CuttingAgent : Agent
         MoveTo(freeStation.transform);
         yield return new WaitUntil(() => !isMoving);
 
-        // Déposer l'ingrédient
-        if (freeStation.AddIngredient(cutIngredient))
+        // Déposer l'ingrédient, attendre devant si la place se referme entre temps,
+        // mais basculer immédiatement si une autre station libre apparaît.
+        bool placed = false;
+        while (!placed)
         {
-            DropIngredient();
+            placed = freeStation.AddIngredient(cutIngredient);
+            if (!placed)
+            {
+                CutIngredientsStation alternative = FindAlternativeCutStation(freeStation);
+                if (alternative != null)
+                {
+                    freeStation = alternative;
+                    MoveTo(freeStation.transform);
+                    yield return new WaitUntil(() => !isMoving);
+                    continue;
+                }
+
+                currentState = AgentState.Waiting;
+                yield return new WaitForSeconds(0.1f);
+            }
         }
+
+        DropIngredient();
+        currentState = AgentState.Idle;
 
         yield return new WaitForSeconds(0.1f);
     }
@@ -108,6 +127,24 @@ public class CuttingAgent : Agent
                 return station;
             }
         }
+        return null;
+    }
+
+    private CutIngredientsStation FindAlternativeCutStation(CutIngredientsStation current)
+    {
+        foreach (CutIngredientsStation station in cutIngredientsStations)
+        {
+            if (station == null || station == current)
+            {
+                continue;
+            }
+
+            if (station.IsAvailable())
+            {
+                return station;
+            }
+        }
+
         return null;
     }
 }
