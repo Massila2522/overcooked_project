@@ -2,14 +2,14 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class Agent5 : Agent
+public class DressingAgent : Agent
 {
     private RecipeManager recipeManager;
     private CookingStation[] cookingStations;
     private CutIngredientsStation[] cutIngredientsStations;
     private PlateStation[] plateStations;
     private ServeStation[] serveStations;
-    private GameObject[] vaisselleStations;
+    private GameObject[] vaisselleStations; // Pile d'assiettes
     private GameObject marmitePrefab;
     private GameObject panPrefab;
 
@@ -17,9 +17,10 @@ public class Agent5 : Agent
 
     protected override void Start()
     {
+        // Si agentLabel n'est pas défini dans l'inspecteur, utiliser une valeur par défaut
         if (string.IsNullOrEmpty(agentLabel))
         {
-            agentLabel = "Agent 5";
+            agentLabel = "Dressing Agent";
         }
 
         base.Start();
@@ -30,6 +31,7 @@ public class Agent5 : Agent
         plateStations = FindObjectsByType<PlateStation>(FindObjectsSortMode.None);
         serveStations = FindObjectsByType<ServeStation>(FindObjectsSortMode.None);
         
+        // Trouver les stations vaisselle (pile d'assiettes)
         GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
         System.Collections.Generic.List<GameObject> vaisselleList = new System.Collections.Generic.List<GameObject>();
         foreach (GameObject obj in allObjects)
@@ -41,6 +43,7 @@ public class Agent5 : Agent
         }
         vaisselleStations = vaisselleList.ToArray();
 
+        // Charger les prefabs
         LoadPrefabs();
         
         StartCoroutine(WorkLoop());
@@ -126,10 +129,13 @@ public class Agent5 : Agent
             yield break;
         }
 
-        // Vérifier si les ingrédients sont disponibles avant de commencer
-        if (!AreIngredientsReady(currentRecipe))
+        // ÉTAPE 1 : Poser une assiette sur une table à assiettes libre dès maintenant
+        PlateStation myPlateStation = null;
+        yield return StartCoroutine(PlacePlateForRecipe(currentRecipe, plate => myPlateStation = plate));
+        
+        if (myPlateStation == null)
         {
-            // Libérer la réservation si les ingrédients ne sont pas prêts
+            // Libérer la réservation si on ne peut pas poser d'assiette
             currentRecipe.IsReserved = false;
             currentRecipe.ReservedBy = null;
             currentRecipe = null;
@@ -137,18 +143,120 @@ public class Agent5 : Agent
             yield break;
         }
 
+        // ÉTAPE 2 : Traiter la recette en ajoutant les ingrédients un par un
         if (currentRecipe.IsSoup())
         {
-            yield return StartCoroutine(CookSoup(currentRecipe));
+            yield return StartCoroutine(AssembleSoup(currentRecipe, myPlateStation));
         }
         else
         {
-            yield return StartCoroutine(CookBurger(currentRecipe));
+            yield return StartCoroutine(AssembleBurger(currentRecipe, myPlateStation));
+        }
+
+        // ÉTAPE 3 : Attendre que l'assiette soit prête
+        yield return new WaitUntil(() => myPlateStation.IsReady());
+
+        // ÉTAPE 4 : Servir l'assiette
+        GameObject finishedPlate = myPlateStation.TakePlate();
+        if (finishedPlate != null)
+        {
+            // S'assurer qu'on ne porte rien d'autre
+            if (currentIngredient != null)
+            {
+                DropIngredient();
+            }
+            
+            PickUpPlate(finishedPlate);
+
+            // Appliquer le sprite final
+            Sprite finalSprite = null;
+            if (currentRecipe.IsSoup())
+            {
+                finalSprite = soupSpriteOverride;
+                if (finalSprite == null && IngredientSpriteManager.Instance != null)
+                {
+                    finalSprite = IngredientSpriteManager.Instance.GetPlateSprite(currentRecipe.Type);
+                }
+            }
+            else
+            {
+                finalSprite = burgerSpriteOverride;
+                if (finalSprite == null && IngredientSpriteManager.Instance != null)
+                {
+                    finalSprite = IngredientSpriteManager.Instance.GetPlateSprite(RecipeType.Burger);
+                }
+            }
+
+            if (finalSprite != null && finishedPlate != null)
+            {
+                SpriteRenderer sr = finishedPlate.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.sprite = finalSprite;
+            }
+
+            ServeStation serveStation = FindFreeServeStation();
+            MoveTo(serveStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+
+            serveStation?.ServePlate(finishedPlate);
+            DropPlate();
         }
 
         // Marquer la recette comme complétée et la retirer de la file
         recipeManager.CompleteRecipe(currentRecipe);
         currentRecipe = null;
+    }
+
+    private IEnumerator PlacePlateForRecipe(Recipe recipe, System.Action<PlateStation> onPlatePlaced)
+    {
+        // Trouver une table à assiettes libre
+        PlateStation freeStation = FindFreePlateStation();
+        while (freeStation == null)
+        {
+            yield return new WaitForSeconds(0.1f);
+            freeStation = FindFreePlateStation();
+        }
+
+        // S'assurer qu'on ne porte rien
+        if (currentIngredient != null)
+        {
+            DropIngredient();
+        }
+        if (currentPlate != null)
+        {
+            DropPlate();
+        }
+
+        // Créer et prendre l'assiette
+        GameObject plate = GetPlate();
+        while (plate == null)
+        {
+            yield return new WaitForSeconds(0.1f);
+            plate = GetPlate();
+        }
+
+        PickUpPlate(plate);
+
+        // Aller à la station
+        MoveTo(freeStation.transform);
+        yield return new WaitUntil(() => !isMoving);
+
+        // Poser l'assiette avec le RecipeId
+        while (!freeStation.PlacePlate(plate, this, recipe.Order))
+        {
+            yield return new WaitForSeconds(0.1f);
+            freeStation = null;
+            while (freeStation == null)
+            {
+                yield return new WaitForSeconds(0.1f);
+                freeStation = FindFreePlateStation();
+            }
+            MoveTo(freeStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+        }
+
+        freeStation.SetRecipe(recipe);
+        DropPlate();
+        onPlatePlaced?.Invoke(freeStation);
     }
 
     private bool AreIngredientsReady(Recipe recipe)
@@ -173,35 +281,38 @@ public class Agent5 : Agent
         return true;
     }
 
-    private IEnumerator CookSoup(Recipe recipe)
+    private IEnumerator AssembleSoup(Recipe recipe, PlateStation plateStation)
     {
         if (marmitePrefab == null)
         {
-            Debug.LogError("Marmite prefab introuvable pour Agent5.");
+            Debug.LogError("Marmite prefab introuvable pour DressingAgent.");
             yield break;
         }
 
+        // Trouver une station de cuisson libre
         CookingStation cookingStation = FindFreeCookingStation();
         while (cookingStation == null)
         {
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             cookingStation = FindFreeCookingStation();
         }
 
+        // Placer la marmite
         GameObject marmiteInstance = Instantiate(marmitePrefab);
         while (!cookingStation.PlaceUtensil(marmiteInstance, true, this))
         {
             Destroy(marmiteInstance);
             cookingStation = null;
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
             while (cookingStation == null)
             {
-                yield return null;
+                yield return new WaitForSeconds(0.1f);
                 cookingStation = FindFreeCookingStation();
             }
             marmiteInstance = Instantiate(marmitePrefab);
         }
 
+        // Ajouter tous les ingrédients à la marmite
         for (int i = 0; i < 3; i++)
         {
             IngredientType neededType = recipe.RequiredIngredients[i];
@@ -209,173 +320,121 @@ public class Agent5 : Agent
 
             while (ingredient == null)
             {
-                yield return null;
+                yield return new WaitForSeconds(0.1f);
                 ingredient = GetCutIngredient(neededType, recipe.Order);
             }
 
+            // S'assurer qu'on ne porte rien
+            if (currentIngredient != null)
+            {
+                DropIngredient();
+            }
+            if (currentPlate != null)
+            {
+                DropPlate();
+            }
+
+            PickUpIngredient(ingredient);
+            MoveTo(cookingStation.transform);
+            yield return new WaitUntil(() => !isMoving);
             cookingStation.AddIngredient(ingredient);
+            DropIngredient();
         }
 
+        // Cuire
         MoveTo(cookingStation.transform);
         yield return new WaitUntil(() => !isMoving);
-
         cookingStation.StartCooking(recipe);
         yield return new WaitUntil(() => cookingStation.IsReady());
 
-        GameObject plate = GetPlate();
-        while (plate == null)
-        {
-            yield return null;
-            plate = GetPlate();
-        }
-
-        PickUpPlate(plate);
-
-        PlateStation plateStation = FindFreePlateStation();
-        while (plateStation == null)
-        {
-            yield return null;
-            plateStation = FindFreePlateStation();
-        }
-
-        MoveTo(plateStation.transform);
-        yield return new WaitUntil(() => !isMoving);
-
-        while (!plateStation.PlacePlate(plate, this))
-        {
-            yield return null;
-            plateStation = null;
-            while (plateStation == null)
-            {
-                yield return null;
-                plateStation = FindFreePlateStation();
-            }
-        }
-
-        plateStation.SetRecipe(recipe);
-        DropPlate();
-
+        // Récupérer les ingrédients cuits et les ajouter un par un à l'assiette
         var cookedIngredients = cookingStation.GetCookedIngredients();
         foreach (var ing in cookedIngredients)
         {
+            // S'assurer qu'on ne porte rien
+            if (currentIngredient != null)
+            {
+                DropIngredient();
+            }
+            if (currentPlate != null)
+            {
+                DropPlate();
+            }
+
+            PickUpIngredient(ing);
+            MoveTo(plateStation.transform);
+            yield return new WaitUntil(() => !isMoving);
             plateStation.AddIngredient(ing);
+            DropIngredient();
         }
 
         cookingStation.ClearStation();
-
-        yield return new WaitUntil(() => plateStation.IsReady());
-
-        GameObject finishedPlate = plateStation.TakePlate();
-        PickUpPlate(finishedPlate);
-
-        Sprite soupSprite = soupSpriteOverride;
-        if (soupSprite == null && IngredientSpriteManager.Instance != null)
-        {
-            soupSprite = IngredientSpriteManager.Instance.GetPlateSprite(recipe.Type);
-        }
-        
-        if (soupSprite != null && finishedPlate != null)
-        {
-            SpriteRenderer sr = finishedPlate.GetComponent<SpriteRenderer>();
-            if (sr != null) sr.sprite = soupSprite;
-        }
-
-        ServeStation serveStation = FindFreeServeStation();
-        MoveTo(serveStation.transform);
-        yield return new WaitUntil(() => !isMoving);
-
-        serveStation?.ServePlate(finishedPlate);
-        DropPlate();
     }
 
-    private IEnumerator CookBurger(Recipe recipe)
+    private IEnumerator AssembleBurger(Recipe recipe, PlateStation plateStation)
     {
-        GameObject plate = GetPlate();
-        while (plate == null)
-        {
-            yield return null;
-            plate = GetPlate();
-        }
-
-        PickUpPlate(plate);
-
-        PlateStation plateStation = FindFreePlateStation();
-        while (plateStation == null)
-        {
-            yield return null;
-            plateStation = FindFreePlateStation();
-        }
-
-        MoveTo(plateStation.transform);
-        yield return new WaitUntil(() => !isMoving);
-
-        while (!plateStation.PlacePlate(plate, this))
-        {
-            yield return null;
-            plateStation = null;
-            while (plateStation == null)
-            {
-                yield return null;
-                plateStation = FindFreePlateStation();
-            }
-        }
-
-        plateStation.SetRecipe(recipe);
-        DropPlate();
-
+        // Ajouter les ingrédients un par un dans l'assiette
         foreach (IngredientType neededType in recipe.RequiredIngredients)
         {
             if (neededType == IngredientType.Meat)
             {
+                // Cuire la viande d'abord
                 Ingredient cookedMeat = null;
                 yield return StartCoroutine(CookMeat(recipe, ing => cookedMeat = ing));
+                
                 if (cookedMeat != null)
                 {
+                    // S'assurer qu'on ne porte rien
+                    if (currentIngredient != null)
+                    {
+                        DropIngredient();
+                    }
+                    if (currentPlate != null)
+                    {
+                        DropPlate();
+                    }
+
+                    PickUpIngredient(cookedMeat);
+                    MoveTo(plateStation.transform);
+                    yield return new WaitUntil(() => !isMoving);
                     plateStation.AddIngredient(cookedMeat);
+                    DropIngredient();
                 }
             }
             else
             {
+                // Récupérer l'ingrédient découpé
                 Ingredient ingredient = GetCutIngredient(neededType, recipe.Order);
                 while (ingredient == null)
                 {
-                    yield return null;
+                    yield return new WaitForSeconds(0.1f);
                     ingredient = GetCutIngredient(neededType, recipe.Order);
                 }
+
+                // S'assurer qu'on ne porte rien
+                if (currentIngredient != null)
+                {
+                    DropIngredient();
+                }
+                if (currentPlate != null)
+                {
+                    DropPlate();
+                }
+
+                PickUpIngredient(ingredient);
+                MoveTo(plateStation.transform);
+                yield return new WaitUntil(() => !isMoving);
                 plateStation.AddIngredient(ingredient);
+                DropIngredient();
             }
         }
-
-        yield return new WaitUntil(() => plateStation.IsReady());
-
-        GameObject finishedPlate = plateStation.TakePlate();
-        PickUpPlate(finishedPlate);
-
-        Sprite burgerSprite = burgerSpriteOverride;
-        if (burgerSprite == null && IngredientSpriteManager.Instance != null)
-        {
-            burgerSprite = IngredientSpriteManager.Instance.GetPlateSprite(RecipeType.Burger);
-        }
-        
-        if (burgerSprite != null && finishedPlate != null)
-        {
-            SpriteRenderer sr = finishedPlate.GetComponent<SpriteRenderer>();
-            if (sr != null) sr.sprite = burgerSprite;
-        }
-
-        ServeStation serveStation = FindFreeServeStation();
-        MoveTo(serveStation.transform);
-        yield return new WaitUntil(() => !isMoving);
-
-        serveStation?.ServePlate(finishedPlate);
-        DropPlate();
     }
 
     private IEnumerator CookMeat(Recipe recipe, Action<Ingredient> onCooked)
     {
         if (panPrefab == null)
         {
-            Debug.LogError("Poêle prefab introuvable pour Agent5.");
+            Debug.LogError("Poêle prefab introuvable pour DressingAgent.");
             yield break;
         }
 
@@ -446,6 +505,7 @@ public class Agent5 : Agent
 
                 if (type == IngredientType.BurgerBun)
                 {
+                    // Les pains n'ont pas besoin d'être coupés
                     isReady = true;
                 }
 
@@ -512,7 +572,7 @@ public class Agent5 : Agent
     {
         if (serveStations.Length > 0)
         {
-            return serveStations[0];
+            return serveStations[0]; // Toujours disponible
         }
         return null;
     }

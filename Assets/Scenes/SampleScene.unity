@@ -42,7 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -765,6 +766,7 @@ MonoBehaviour:
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3010,52 +3012,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!1 &566732204
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 566732206}
-  - component: {fileID: 566732205}
-  m_Layer: 0
-  m_Name: RecipeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &566732205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566732204}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79c1581ec3b029d49bcf322178614c5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minDelay: 2
-  maxDelay: 5
---- !u!4 &566732206
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566732204}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.805719, y: 3.6215189, z: 0.016889729}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &593734095
 GameObject:
   m_ObjectHideFlags: 0
@@ -3355,7 +3311,7 @@ GameObject:
   m_Component:
   - component: {fileID: 738460399}
   - component: {fileID: 738460398}
-  - component: {fileID: 738460397}
+  - component: {fileID: 738460400}
   m_Layer: 0
   m_Name: Agent 3
   m_TagString: Untagged
@@ -3363,24 +3319,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &738460397
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 738460396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f01f463a09d53bc47b7228237f775a57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  agentLabel: 
-  labelYOffset: -0.6
-  labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 16
-  labelCharacterSize: 0.12
 --- !u!212 &738460398
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3451,6 +3389,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &738460400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738460396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b9e13e30abacb747810884bee258a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  agentLabel: Agent 3
+  labelYOffset: -0.6
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 16
+  labelCharacterSize: 0.12
 --- !u!1 &812792715
 GameObject:
   m_ObjectHideFlags: 0
@@ -3461,7 +3417,7 @@ GameObject:
   m_Component:
   - component: {fileID: 812792718}
   - component: {fileID: 812792717}
-  - component: {fileID: 812792716}
+  - component: {fileID: 812792719}
   m_Layer: 0
   m_Name: Agent 4
   m_TagString: Untagged
@@ -3469,29 +3425,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &812792716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 812792715}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ce4ec26cc1a0944ba7f921a07571320, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  agentLabel: 
-  labelYOffset: -0.6
-  labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 16
-  labelCharacterSize: 0.12
-  marmiteSpriteOverride: {fileID: 0}
-  panSpriteOverride: {fileID: 0}
-  plateSpriteOverride: {fileID: 0}
-  soupSpriteOverride: {fileID: 0}
-  burgerSpriteOverride: {fileID: 0}
 --- !u!212 &812792717
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3562,51 +3495,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &813312165
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 813312167}
-  - component: {fileID: 813312166}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &813312166
+--- !u!114 &812792719
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813312165}
+  m_GameObject: {fileID: 812792715}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c19dcc968e4bd8a4cb32b44cf69327ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f16155315c07834eaebbf1330d53198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recipeManager: {fileID: 566732205}
---- !u!4 &813312167
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813312165}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.805719, y: 3.6215189, z: 0.016889729}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  moveSpeed: 3
+  agentLabel: Agent 4
+  labelYOffset: -0.6
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 16
+  labelCharacterSize: 0.12
+  marmiteSpriteOverride: {fileID: 0}
+  panSpriteOverride: {fileID: 0}
+  plateSpriteOverride: {fileID: 0}
+  soupSpriteOverride: {fileID: 0}
+  burgerSpriteOverride: {fileID: 0}
 --- !u!1 &842507495
 GameObject:
   m_ObjectHideFlags: 0
@@ -3909,7 +3820,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1091839492}
   - component: {fileID: 1091839491}
-  - component: {fileID: 1091839490}
+  - component: {fileID: 1091839493}
   m_Layer: 0
   m_Name: Agent 1
   m_TagString: Untagged
@@ -3917,24 +3828,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1091839490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1091839489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d03ccf6231485643868c9199ed826a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  agentLabel: 
-  labelYOffset: -0.6
-  labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 16
-  labelCharacterSize: 0.12
 --- !u!212 &1091839491
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4005,51 +3898,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1119263794
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1119263796}
-  - component: {fileID: 1119263795}
-  m_Layer: 0
-  m_Name: UIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1119263795
+--- !u!114 &1091839493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1119263794}
+  m_GameObject: {fileID: 1091839489}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1da09657d5c0af94eb904af46ac00b0a, type: 3}
+  m_Script: {fileID: 11500000, guid: 4652feb84c699c94391fde3d66731db5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blackboardText: {fileID: 407077615}
---- !u!4 &1119263796
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1119263794}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.805719, y: 3.6215189, z: 0.016889729}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  moveSpeed: 3
+  agentLabel: Agent 1
+  labelYOffset: -0.6
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 16
+  labelCharacterSize: 0.12
 --- !u!1 &1209024372
 GameObject:
   m_ObjectHideFlags: 0
@@ -4264,7 +4130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1306147020}
   - component: {fileID: 1306147019}
-  - component: {fileID: 1306147018}
+  - component: {fileID: 1306147021}
   m_Layer: 0
   m_Name: Agent 2
   m_TagString: Untagged
@@ -4272,24 +4138,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1306147018
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1306147017}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9f6e3aa9b0329147920312b1949ab77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  agentLabel: 
-  labelYOffset: -0.6
-  labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 16
-  labelCharacterSize: 0.12
 --- !u!212 &1306147019
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4360,6 +4208,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1306147021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306147017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b9e13e30abacb747810884bee258a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  agentLabel: Agent 2
+  labelYOffset: -0.6
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 16
+  labelCharacterSize: 0.12
 --- !u!1 &1340817483
 GameObject:
   m_ObjectHideFlags: 0
@@ -4408,6 +4274,7 @@ MonoBehaviour:
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!114 &1340817485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4728,61 +4595,6 @@ MonoBehaviour:
   ingredientType: 4
   maxStock: 100
   rawIngredientSprite: {fileID: 0}
---- !u!1 &1653775150
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1653775151}
-  - component: {fileID: 1653775152}
-  m_Layer: 0
-  m_Name: SpriteManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1653775151
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1653775150}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.805719, y: 3.6215189, z: 0.016889729}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1653775152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1653775150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09e4426155f4e5f40a36b0baf0a9ef4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onionSprites: {fileID: 11400000, guid: c105fd97bc56b664d899279ae5e225dd, type: 2}
-  tomatoSprites: {fileID: 11400000, guid: de895e2c9df3ae74697a45b57c9ce01d, type: 2}
-  mushroomSprites: {fileID: 11400000, guid: b3d2f0d642f4d1e459f49261aa1fd1db, type: 2}
-  lettuceSprites: {fileID: 11400000, guid: 609aad5e771c527498d3b2d1af02f210, type: 2}
-  meatSprites: {fileID: 11400000, guid: d24d75e73281b79439aa183abb432409, type: 2}
-  burgerBunSprites: {fileID: 11400000, guid: f491729ab2cc1b1449ad91d21b0bd09d, type: 2}
-  marmiteSprite: {fileID: 21300000, guid: 4a966f55680f70d448cb9616844c47b8, type: 3}
-  panSprite: {fileID: 21300000, guid: d82df233a60fa584d80f526d59869a89, type: 3}
-  plateSprite: {fileID: 21300000, guid: 3aa5ca9954d1aa047868fefe80795441, type: 3}
-  soupSprite: {fileID: 21300000, guid: 31243ad20644f34409c708e5dc7b7426, type: 3}
-  burgerSprite: {fileID: 21300000, guid: 50c0ee67085444243960593bb7adccc2, type: 3}
 --- !u!1 &1714605500
 GameObject:
   m_ObjectHideFlags: 0
@@ -5167,7 +4979,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2003793337}
   - component: {fileID: 2003793336}
-  - component: {fileID: 2003793335}
+  - component: {fileID: 2003793338}
   m_Layer: 0
   m_Name: Agent 5
   m_TagString: Untagged
@@ -5175,29 +4987,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2003793335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2003793334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88e3f38f30aa4344aadc0b235e02e80c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 3
-  agentLabel: 
-  labelYOffset: -0.6
-  labelColor: {r: 1, g: 1, b: 1, a: 1}
-  labelFontSize: 16
-  labelCharacterSize: 0.12
-  marmiteSpriteOverride: {fileID: 0}
-  panSpriteOverride: {fileID: 0}
-  plateSpriteOverride: {fileID: 0}
-  soupSpriteOverride: {fileID: 0}
-  burgerSpriteOverride: {fileID: 0}
 --- !u!212 &2003793336
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5268,6 +5057,29 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2003793338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2003793334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f16155315c07834eaebbf1330d53198, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  agentLabel: Agent 5
+  labelYOffset: -0.6
+  labelColor: {r: 1, g: 1, b: 1, a: 1}
+  labelFontSize: 16
+  labelCharacterSize: 0.12
+  marmiteSpriteOverride: {fileID: 0}
+  panSpriteOverride: {fileID: 0}
+  plateSpriteOverride: {fileID: 0}
+  soupSpriteOverride: {fileID: 0}
+  burgerSpriteOverride: {fileID: 0}
 --- !u!1 &2085108072
 GameObject:
   m_ObjectHideFlags: 0
@@ -5396,6 +5208,8 @@ GameObject:
   - component: {fileID: 2085108080}
   - component: {fileID: 2085108082}
   - component: {fileID: 2085108083}
+  - component: {fileID: 2085108085}
+  - component: {fileID: 2085108084}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -5430,6 +5244,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minDelay: 2
   maxDelay: 5
+--- !u!114 &2085108084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085108081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09e4426155f4e5f40a36b0baf0a9ef4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onionSprites: {fileID: 11400000, guid: c105fd97bc56b664d899279ae5e225dd, type: 2}
+  tomatoSprites: {fileID: 11400000, guid: de895e2c9df3ae74697a45b57c9ce01d, type: 2}
+  mushroomSprites: {fileID: 11400000, guid: b3d2f0d642f4d1e459f49261aa1fd1db, type: 2}
+  lettuceSprites: {fileID: 11400000, guid: 609aad5e771c527498d3b2d1af02f210, type: 2}
+  meatSprites: {fileID: 11400000, guid: d24d75e73281b79439aa183abb432409, type: 2}
+  burgerBunSprites: {fileID: 11400000, guid: f491729ab2cc1b1449ad91d21b0bd09d, type: 2}
+  marmiteSprite: {fileID: 21300000, guid: 4a966f55680f70d448cb9616844c47b8, type: 3}
+  panSprite: {fileID: 21300000, guid: d82df233a60fa584d80f526d59869a89, type: 3}
+  plateSprite: {fileID: 21300000, guid: 3aa5ca9954d1aa047868fefe80795441, type: 3}
+  soupSprite: {fileID: 21300000, guid: 31243ad20644f34409c708e5dc7b7426, type: 3}
+  burgerSprite: {fileID: 21300000, guid: 50c0ee67085444243960593bb7adccc2, type: 3}
+--- !u!114 &2085108085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085108081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da09657d5c0af94eb904af46ac00b0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blackboardText: {fileID: 407077615}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -5463,9 +5313,5 @@ SceneRoots:
   - {fileID: 738460399}
   - {fileID: 812792718}
   - {fileID: 2003793337}
-  - {fileID: 813312167}
-  - {fileID: 566732206}
-  - {fileID: 1119263796}
-  - {fileID: 1653775151}
   - {fileID: 842507499}
   - {fileID: 1340817486}

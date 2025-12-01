@@ -132,7 +132,10 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      8bit-pixel-graphic-blue-sky-background-with-clouds-vector_0: 8523630112496917713
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -67,9 +67,9 @@ Pour chaque `ReserveStation` dans la scène :
 
 ---
 
-## 📋 ÉTAPE 5 : CONFIGURER LES AGENTS 4 ET 5 (OPTIONNEL)
+## 📋 ÉTAPE 5 : CONFIGURER LES AGENTS DE CUISINE (OPTIONNEL)
 
-Pour `Agent4` et `Agent5` :
+Pour les `DressingAgent` :
 - Vous pouvez optionnellement assigner des sprites dans la section "Sprites (optionnel)"
 - Si non assignés, le système utilisera automatiquement `IngredientSpriteManager`
 

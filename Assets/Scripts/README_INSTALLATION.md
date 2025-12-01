@@ -21,11 +21,9 @@
 
 ### Agents
 - `Agent.cs` - Classe de base pour tous les agents
-- `Agent1.cs` - Agent récupération ingrédients
-- `Agent2.cs` - Agent découpage
-- `Agent3.cs` - Agent découpage
-- `Agent4.cs` - Agent cuisine
-- `Agent5.cs` - Agent cuisine
+- `IngredientProviderAgent.cs` - Agent récupération ingrédients depuis les réserves
+- `CuttingAgent.cs` - Agent découpage des ingrédients
+- `DressingAgent.cs` - Agent assemblage et service des recettes
 
 ### Managers
 - `RecipeManager.cs` - Gestion des recettes
@@ -73,16 +71,15 @@ Pour `Station - Place assiette Gauche` et `Droite` :
 Pour `Station - Rendu Gauche` et `Droite` :
 - Ajouter le script `ServeStation.cs`
 
-#### Agents (5 GameObjects)
-Pour `Agent 1`, `Agent 2`, `Agent 3`, `Agent 4`, `Agent 5` :
-- Ajouter les scripts correspondants :
-  - `Agent 1` → `Agent1.cs`
-  - `Agent 2` → `Agent2.cs`
-  - `Agent 3` → `Agent3.cs`
-  - `Agent 4` → `Agent4.cs`
-  - `Agent 5` → `Agent5.cs`
+#### Agents (3 GameObjects minimum)
+Pour chaque agent dans la scène :
+- Ajouter le script correspondant selon le rôle :
+  - Agent récupération ingrédients → `IngredientProviderAgent.cs`
+  - Agent découpage → `CuttingAgent.cs` (peut être dupliqué pour plusieurs agents de découpage)
+  - Agent assemblage → `DressingAgent.cs` (peut être dupliqué pour plusieurs agents d'assemblage)
 - Ajouter un `SpriteRenderer` avec le sprite `agent.png` si pas déjà fait
 - Ajuster `moveSpeed` si nécessaire (défaut : 3)
+- Le label de l'agent sera automatiquement défini selon le type d'agent
 
 #### Managers
 Créer un GameObject vide nommé "Managers" :
@@ -119,9 +116,9 @@ Créer un Canvas avec des TextMeshPro :
 
 1. Lancer la scène
 2. Les recettes doivent commencer à arriver toutes les 2-5 secondes
-3. Agent 1 doit récupérer les ingrédients des réserves
-4. Agents 2 et 3 doivent découper les ingrédients
-5. Agents 4 et 5 doivent cuisiner et servir
+3. Les IngredientProviderAgent doivent récupérer les ingrédients des réserves
+4. Les CuttingAgent doivent découper les ingrédients
+5. Les DressingAgent doivent assembler et servir les recettes
 
 ---
 

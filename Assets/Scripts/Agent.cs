@@ -7,10 +7,11 @@ public abstract class Agent : MonoBehaviour
     public float moveSpeed = 3f;
 
     [Header("Identification")]
-    [SerializeField] protected string agentLabel;
+    [SerializeField] [Tooltip("Label affiché au-dessus de l'agent. Si vide, utilise le nom du GameObject ou un nom par défaut.")]
+    protected string agentLabel;
     [SerializeField] private float labelYOffset = -0.6f;
     [SerializeField] private Color labelColor = Color.white;
-    [SerializeField] private int labelFontSize = 32;
+    [SerializeField] private int labelFontSize = 16;
     [SerializeField] private float labelCharacterSize = 0.12f;
 
     public Ingredient currentIngredient { get; protected set; }
@@ -99,6 +100,12 @@ public abstract class Agent : MonoBehaviour
 
     protected void PickUpIngredient(Ingredient ingredient)
     {
+        // S'assurer qu'on ne porte rien d'autre
+        if (currentPlate != null)
+        {
+            DropPlate();
+        }
+        
         currentIngredient = ingredient;
         if (ingredient != null && ingredient.GameObject != null)
         {
@@ -125,6 +132,12 @@ public abstract class Agent : MonoBehaviour
 
     protected void PickUpPlate(GameObject plate)
     {
+        // S'assurer qu'on ne porte rien d'autre
+        if (currentIngredient != null)
+        {
+            DropIngredient();
+        }
+        
         currentPlate = plate;
         if (plate != null)
         {

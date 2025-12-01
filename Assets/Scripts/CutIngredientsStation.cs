@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CutIngredientsStation : Station
 {
-    private Queue<Ingredient> ingredientQueue = new Queue<Ingredient>();
+    private Ingredient currentIngredient; // Un seul ingrédient à la fois
 
     public bool AddIngredient(Ingredient ingredient)
     {
@@ -11,7 +10,10 @@ public class CutIngredientsStation : Station
 
         lock (lockObject)
         {
-            ingredientQueue.Enqueue(ingredient);
+            // Ne peut accepter qu'un seul ingrédient à la fois
+            if (currentIngredient != null) return false;
+            
+            currentIngredient = ingredient;
             
             if (ingredient.GameObject != null)
             {
@@ -28,24 +30,21 @@ public class CutIngredientsStation : Station
     {
         lock (lockObject)
         {
-            if (ingredientQueue.Count == 0)
+            if (currentIngredient == null)
             {
                 IsOccupied = false;
                 return null;
             }
 
-            Ingredient ingredient = ingredientQueue.Dequeue();
+            Ingredient ingredient = currentIngredient;
+            currentIngredient = null;
             
             if (ingredient.GameObject != null)
             {
                 ingredient.GameObject.SetActive(false);
             }
             
-            if (ingredientQueue.Count == 0)
-            {
-                IsOccupied = false;
-            }
-
+            IsOccupied = false;
             return ingredient;
         }
     }
@@ -54,11 +53,7 @@ public class CutIngredientsStation : Station
     {
         lock (lockObject)
         {
-            if (ingredientQueue.Count == 0)
-            {
-                return null;
-            }
-            return ingredientQueue.Peek();
+            return currentIngredient;
         }
     }
 
@@ -66,65 +61,40 @@ public class CutIngredientsStation : Station
     {
         lock (lockObject)
         {
-            if (ingredientQueue.Count == 0)
+            if (currentIngredient == null)
             {
                 IsOccupied = false;
                 return null;
             }
 
-            // Chercher le premier ingrédient du type demandé
-            Queue<Ingredient> tempQueue = new Queue<Ingredient>();
-            Ingredient found = null;
-
-            while (ingredientQueue.Count > 0)
+            if (currentIngredient.Type == type)
             {
-                Ingredient ing = ingredientQueue.Dequeue();
-                if (found == null && ing.Type == type)
+                Ingredient found = currentIngredient;
+                currentIngredient = null;
+                
+                if (found.GameObject != null)
                 {
-                    found = ing;
-                    if (ing.GameObject != null)
-                    {
-                        ing.GameObject.SetActive(false);
-                    }
+                    found.GameObject.SetActive(false);
                 }
-                else
-                {
-                    tempQueue.Enqueue(ing);
-                }
-            }
-
-            // Remettre les autres ingrédients dans la queue
-            while (tempQueue.Count > 0)
-            {
-                ingredientQueue.Enqueue(tempQueue.Dequeue());
-            }
-
-            if (ingredientQueue.Count == 0)
-            {
+                
                 IsOccupied = false;
+                return found;
             }
 
-            return found;
+            return null;
         }
     }
 
     public bool HasIngredient()
     {
-        return ingredientQueue.Count > 0;
+        return currentIngredient != null;
     }
 
     public bool HasIngredientOfType(IngredientType type)
     {
         lock (lockObject)
         {
-            foreach (Ingredient ing in ingredientQueue)
-            {
-                if (ing.Type == type)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return currentIngredient != null && currentIngredient.Type == type;
         }
     }
 
@@ -132,14 +102,9 @@ public class CutIngredientsStation : Station
     {
         lock (lockObject)
         {
-            foreach (Ingredient ing in ingredientQueue)
-            {
-                if (ing.Type == type && ing.RecipeId == recipeId)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return currentIngredient != null && 
+                   currentIngredient.Type == type && 
+                   currentIngredient.RecipeId == recipeId;
         }
     }
 
@@ -147,51 +112,33 @@ public class CutIngredientsStation : Station
     {
         lock (lockObject)
         {
-            if (ingredientQueue.Count == 0)
+            if (currentIngredient == null)
             {
                 IsOccupied = false;
                 return null;
             }
 
-            // Chercher le premier ingrédient du type et recipeId demandés
-            Queue<Ingredient> tempQueue = new Queue<Ingredient>();
-            Ingredient found = null;
-
-            while (ingredientQueue.Count > 0)
+            if (currentIngredient.Type == type && currentIngredient.RecipeId == recipeId)
             {
-                Ingredient ing = ingredientQueue.Dequeue();
-                if (found == null && ing.Type == type && ing.RecipeId == recipeId)
+                Ingredient found = currentIngredient;
+                currentIngredient = null;
+                
+                if (found.GameObject != null)
                 {
-                    found = ing;
-                    if (ing.GameObject != null)
-                    {
-                        ing.GameObject.SetActive(false);
-                    }
+                    found.GameObject.SetActive(false);
                 }
-                else
-                {
-                    tempQueue.Enqueue(ing);
-                }
-            }
-
-            // Remettre les autres ingrédients dans la queue
-            while (tempQueue.Count > 0)
-            {
-                ingredientQueue.Enqueue(tempQueue.Dequeue());
-            }
-
-            if (ingredientQueue.Count == 0)
-            {
+                
                 IsOccupied = false;
+                return found;
             }
 
-            return found;
+            return null;
         }
     }
 
     public int QueueCount()
     {
-        return ingredientQueue.Count;
+        return currentIngredient != null ? 1 : 0;
     }
 }
 

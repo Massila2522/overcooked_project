@@ -1,16 +1,17 @@
 using UnityEngine;
 using System.Collections;
 
-public class Agent3 : Agent
+public class CuttingAgent : Agent
 {
     private CuttingStation[] cuttingStations;
     private CutIngredientsStation[] cutIngredientsStations;
 
     protected override void Start()
     {
+        // Si agentLabel n'est pas défini dans l'inspecteur, utiliser une valeur par défaut
         if (string.IsNullOrEmpty(agentLabel))
         {
-            agentLabel = "Agent 3";
+            agentLabel = "Cutting Agent";
         }
 
         base.Start();
@@ -102,7 +103,7 @@ public class Agent3 : Agent
     {
         foreach (CutIngredientsStation station in cutIngredientsStations)
         {
-            if (station.IsAvailable() || station.QueueCount() < 2)
+            if (station.IsAvailable())
             {
                 return station;
             }

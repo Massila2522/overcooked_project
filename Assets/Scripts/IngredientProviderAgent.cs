@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Agent1 : Agent
+public class IngredientProviderAgent : Agent
 {
     private ReserveStation[] reserves;
     private CuttingStation[] cuttingStations;
@@ -9,9 +9,10 @@ public class Agent1 : Agent
 
     protected override void Start()
     {
+        // Si agentLabel n'est pas défini dans l'inspecteur, utiliser une valeur par défaut
         if (string.IsNullOrEmpty(agentLabel))
         {
-            agentLabel = "Agent 1";
+            agentLabel = "Ingredient Provider";
         }
 
         base.Start();
@@ -68,52 +69,49 @@ public class Agent1 : Agent
 
         PickUpIngredient(ingredient);
 
-        // Trouver une place de découpage libre
-        CuttingStation freeStation = FindFreeCuttingStation();
-        if (freeStation == null)
+        // Vérifier si l'ingrédient a besoin d'être découpé
+        bool needsCutting = ingredient.NeedsCutting();
+
+        if (!needsCutting)
         {
-            // Attendre qu'une place se libère
-            yield return new WaitUntil(() => FindFreeCuttingStation() != null);
-            freeStation = FindFreeCuttingStation();
-        }
-
-        // Aller à la place de découpage
-        MoveTo(freeStation.transform);
-        yield return new WaitUntil(() => !isMoving);
-
-        // Si c'est du pain (BurgerBun), il n'a pas besoin d'être découpé
-        // Le placer directement dans CutIngredientsStation
-        if (ingredient.Type == IngredientType.BurgerBun)
-        {
-            // Trouver une station d'ingrédients découpés
-            CutIngredientsStation[] cutStations = FindObjectsByType<CutIngredientsStation>(FindObjectsSortMode.None);
-            CutIngredientsStation freeCutStation = null;
-
-            foreach (CutIngredientsStation station in cutStations)
+            // L'ingrédient n'a pas besoin d'être découpé, le mettre directement dans l'assiette
+            // Trouver l'assiette correspondante à cette recette
+            PlateStation plateStation = PlateStation.FindPlateStationForRecipe(item.RecipeId);
+            
+            if (plateStation != null)
             {
-                if (station.IsAvailable() || station.QueueCount() < 2)
-                {
-                    freeCutStation = station;
-                    break;
-                }
-            }
-
-            if (freeCutStation != null)
-            {
-                // Simuler un ingrédient prêt (pas de découpe nécessaire)
-                ingredient.ChangeState(IngredientState.Cut);
-
-                MoveTo(freeCutStation.transform);
+                // Aller à la station d'assiette
+                MoveTo(plateStation.transform);
                 yield return new WaitUntil(() => !isMoving);
 
-                if (freeCutStation.AddIngredient(ingredient))
+                // Ajouter l'ingrédient directement dans l'assiette
+                if (plateStation.AddIngredient(ingredient))
                 {
                     DropIngredient();
                 }
             }
+            else
+            {
+                // Pas d'assiette trouvée, attendre un peu
+                DropIngredient();
+                yield return new WaitForSeconds(0.5f);
+            }
         }
         else
         {
+            // L'ingrédient doit être découpé, le poser sur une station de découpage
+            CuttingStation freeStation = FindFreeCuttingStation();
+            if (freeStation == null)
+            {
+                // Attendre qu'une place se libère
+                yield return new WaitUntil(() => FindFreeCuttingStation() != null);
+                freeStation = FindFreeCuttingStation();
+            }
+
+            // Aller à la place de découpage
+            MoveTo(freeStation.transform);
+            yield return new WaitUntil(() => !isMoving);
+
             // Poser l'ingrédient sur la station de découpage
             if (freeStation.PlaceIngredient(ingredient))
             {
