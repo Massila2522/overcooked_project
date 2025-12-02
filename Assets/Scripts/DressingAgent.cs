@@ -377,6 +377,12 @@ public class DressingAgent : Agent
         // Ajouter les ingrédients un par un dans l'assiette
         foreach (IngredientType neededType in recipe.RequiredIngredients)
         {
+            // BurgerBun est déjà dans la PlateStation (déposé par IngredientProviderAgent)
+            if (neededType == IngredientType.BurgerBun)
+            {
+                continue;
+            }
+            
             if (neededType == IngredientType.Meat)
             {
                 // Cuire la viande d'abord
@@ -404,10 +410,16 @@ public class DressingAgent : Agent
             }
             else
             {
+                // Pour Lettuce et Tomato : récupérer depuis CutIngredientsStation
                 Ingredient ingredient = null;
                 yield return StartCoroutine(FetchCutIngredient(neededType, recipe.Order, fetched => ingredient = fetched));
+                
+                // FetchCutIngredient attend jusqu'à trouver l'ingrédient, donc ingredient ne devrait jamais être null
+                // Mais on vérifie quand même pour éviter les erreurs
                 if (ingredient == null)
                 {
+                    Debug.LogWarning($"Impossible de récupérer {neededType} pour la recette {recipe.Order}. Réessai...");
+                    yield return new WaitForSeconds(0.5f);
                     continue;
                 }
 
@@ -493,14 +505,27 @@ public class DressingAgent : Agent
     private IEnumerator FetchCutIngredient(IngredientType type, int recipeId, Action<Ingredient> onFetched)
     {
         Ingredient fetched = null;
-        while (fetched == null)
+        int attempts = 0;
+        const int maxAttempts = 1000; // Limite de sécurité pour éviter les boucles infinies
+        
+        while (fetched == null && attempts < maxAttempts)
         {
+            attempts++;
+            
             CutIngredientsStation targetStation = FindCutStationWithIngredient(type, recipeId);
-            while (targetStation == null)
+            while (targetStation == null && attempts < maxAttempts)
             {
                 currentState = AgentState.Waiting;
                 yield return new WaitForSeconds(0.1f);
+                attempts++;
                 targetStation = FindCutStationWithIngredient(type, recipeId);
+            }
+
+            if (targetStation == null)
+            {
+                Debug.LogWarning($"Station avec {type} (recipeId: {recipeId}) introuvable après {attempts} tentatives.");
+                yield return new WaitForSeconds(0.5f);
+                continue;
             }
 
             MoveTo(targetStation.transform);
@@ -509,7 +534,8 @@ public class DressingAgent : Agent
             Ingredient candidate = targetStation.TakeIngredientOfTypeForRecipe(type, recipeId);
             if (candidate == null)
             {
-                yield return new WaitForSeconds(0.05f);
+                // L'ingrédient a peut-être été pris par un autre agent entre-temps
+                yield return new WaitForSeconds(0.1f);
                 continue;
             }
 
@@ -521,11 +547,19 @@ public class DressingAgent : Agent
 
             if (!ready)
             {
-                Debug.LogWarning($"Ingrédient {candidate.Type} récupéré dans un état inattendu ({candidate.State}).");
+                Debug.LogWarning($"Ingrédient {candidate.Type} récupéré dans un état inattendu ({candidate.State}). Remise en place et nouvelle tentative...");
+                // Remettre l'ingrédient dans la station pour qu'il soit retraité
+                targetStation.AddIngredient(candidate);
+                yield return new WaitForSeconds(0.5f);
                 continue;
             }
 
             fetched = candidate;
+        }
+
+        if (fetched == null)
+        {
+            Debug.LogError($"Impossible de récupérer {type} (recipeId: {recipeId}) après {maxAttempts} tentatives.");
         }
 
         currentState = AgentState.Idle;
@@ -536,9 +570,25 @@ public class DressingAgent : Agent
     {
         foreach (CutIngredientsStation station in cutIngredientsStations)
         {
-            if (station.HasIngredientOfTypeForRecipe(type, recipeId))
+            if (station == null) continue;
+            
+            // Vérifier d'abord si la station a un ingrédient du bon type
+            if (station.HasIngredientOfType(type))
             {
-                return station;
+                // Vérifier ensuite si c'est pour la bonne recette
+                if (station.HasIngredientOfTypeForRecipe(type, recipeId))
+                {
+                    return station;
+                }
+                else
+                {
+                    // L'ingrédient est là mais pour une autre recette
+                    Ingredient peeked = station.PeekIngredient();
+                    if (peeked != null)
+                    {
+                        Debug.LogWarning($"Station a {type} mais pour recipeId {peeked.RecipeId} au lieu de {recipeId}");
+                    }
+                }
             }
         }
 
