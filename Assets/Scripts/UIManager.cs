@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
 {
     [Header("UI References")]
     public TextMeshProUGUI blackboardText; // TextMeshPro sur le BlackBoard
+    public TextMeshProUGUI timeCounterText; // Compteur de temps (en haut à gauche)
+    public TextMeshProUGUI recipesCounterText; // Compteur de recettes (en haut à gauche)
 
     private RecipeManager recipeManager;
     private GameManager gameManager;
@@ -40,6 +42,19 @@ public class UIManager : MonoBehaviour
     {
         if (recipeManager == null || gameManager == null) return;
 
+        // Mettre à jour le compteur de temps
+        if (timeCounterText != null)
+        {
+            timeCounterText.text = $"Temps: {gameManager.GetFormattedTime()}";
+        }
+
+        // Mettre à jour le compteur de recettes
+        if (recipesCounterText != null)
+        {
+            recipesCounterText.text = $"Recettes: {gameManager.GetTotalRecipesServed()}";
+        }
+
+        // Mettre à jour le tableau de bord
         if (blackboardText != null)
         {
             blackboardText.text = GetBlackboardText();
