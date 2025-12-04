@@ -9,6 +9,8 @@ public class UIManager : MonoBehaviour
 {
     [Header("UI References")]
     public TextMeshProUGUI blackboardText; // TextMeshPro sur le BlackBoard
+    public TextMeshProUGUI timeCounterText; // Compteur de temps en bas à gauche
+    public TextMeshProUGUI recipeCounterText; // Compteur de recettes en bas à gauche
 
     private RecipeManager recipeManager;
     private GameManager gameManager;
@@ -17,6 +19,8 @@ public class UIManager : MonoBehaviour
     private CookingStation[] cookingStations;
     private CutIngredientsStation[] cutIngredientsStations;
     private PlateStation[] plateStations;
+    
+    private float gameStartTime;
 
     private void Start()
     {
@@ -29,6 +33,9 @@ public class UIManager : MonoBehaviour
         cookingStations = FindObjectsByType<CookingStation>(FindObjectsSortMode.None);
         cutIngredientsStations = FindObjectsByType<CutIngredientsStation>(FindObjectsSortMode.None);
         plateStations = FindObjectsByType<PlateStation>(FindObjectsSortMode.None);
+        
+        // Initialiser le compteur de temps
+        gameStartTime = Time.time;
     }
 
     private void Update()
@@ -38,6 +45,30 @@ public class UIManager : MonoBehaviour
 
     private void UpdateUI()
     {
+        // Mettre à jour le compteur de temps (indépendant des managers)
+        if (timeCounterText != null)
+        {
+            float elapsedTime = Time.time - gameStartTime;
+            int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+            int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+            timeCounterText.text = $"Temps: {minutes}:{seconds:D2}";
+        }
+        
+        // Mettre à jour le compteur de recettes
+        if (recipeCounterText != null)
+        {
+            if (gameManager != null)
+            {
+                int recipesServed = gameManager.GetTotalRecipesServed();
+                recipeCounterText.text = $"Recettes: {recipesServed}";
+            }
+            else
+            {
+                recipeCounterText.text = "Recettes: 0";
+            }
+        }
+
+        // Mettre à jour le blackboard (nécessite les managers)
         if (recipeManager == null || gameManager == null) return;
 
         if (blackboardText != null)
