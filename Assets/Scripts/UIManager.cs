@@ -9,8 +9,8 @@ public class UIManager : MonoBehaviour
 {
     [Header("UI References")]
     public TextMeshProUGUI blackboardText; // TextMeshPro sur le BlackBoard
-    public TextMeshProUGUI timeCounterText; // Compteur de temps (en haut à gauche)
-    public TextMeshProUGUI recipesCounterText; // Compteur de recettes (en haut à gauche)
+    public TextMeshProUGUI timeCounterText; // Compteur de temps en bas à gauche
+    public TextMeshProUGUI recipeCounterText; // Compteur de recettes en bas à gauche
 
     private RecipeManager recipeManager;
     private GameManager gameManager;
@@ -19,6 +19,8 @@ public class UIManager : MonoBehaviour
     private CookingStation[] cookingStations;
     private CutIngredientsStation[] cutIngredientsStations;
     private PlateStation[] plateStations;
+    
+    private float gameStartTime;
 
     private void Start()
     {
@@ -31,6 +33,9 @@ public class UIManager : MonoBehaviour
         cookingStations = FindObjectsByType<CookingStation>(FindObjectsSortMode.None);
         cutIngredientsStations = FindObjectsByType<CutIngredientsStation>(FindObjectsSortMode.None);
         plateStations = FindObjectsByType<PlateStation>(FindObjectsSortMode.None);
+        
+        // Initialiser le compteur de temps
+        gameStartTime = Time.time;
     }
 
     private void Update()
@@ -40,21 +45,32 @@ public class UIManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (recipeManager == null || gameManager == null) return;
-
-        // Mettre à jour le compteur de temps
+        // Mettre à jour le compteur de temps (indépendant des managers)
         if (timeCounterText != null)
         {
-            timeCounterText.text = $"Temps: {gameManager.GetFormattedTime()}";
+            float elapsedTime = Time.time - gameStartTime;
+            int minutes = Mathf.FloorToInt(elapsedTime / 60f);
+            int seconds = Mathf.FloorToInt(elapsedTime % 60f);
+            timeCounterText.text = $"Temps: {minutes}:{seconds:D2}";
         }
-
+        
         // Mettre à jour le compteur de recettes
-        if (recipesCounterText != null)
+        if (recipeCounterText != null)
         {
-            recipesCounterText.text = $"Recettes: {gameManager.GetTotalRecipesServed()}";
+            if (gameManager != null)
+            {
+                int recipesServed = gameManager.GetTotalRecipesServed();
+                recipeCounterText.text = $"Recettes: {recipesServed}";
+            }
+            else
+            {
+                recipeCounterText.text = "Recettes: 0";
+            }
         }
 
-        // Mettre à jour le tableau de bord
+        // Mettre à jour le blackboard (nécessite les managers)
+        if (recipeManager == null || gameManager == null) return;
+
         if (blackboardText != null)
         {
             blackboardText.text = GetBlackboardText();

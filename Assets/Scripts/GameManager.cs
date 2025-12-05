@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour
     public RecipeManager recipeManager;
     
     private int totalRecipesServed = 0;
-    private float gameStartTime;
-    private bool gameStarted = false;
 
     private void Awake()
     {
@@ -29,10 +27,6 @@ public class GameManager : MonoBehaviour
         {
             recipeManager = FindFirstObjectByType<RecipeManager>();
         }
-        
-        // Démarrer le compteur de temps
-        gameStartTime = Time.time;
-        gameStarted = true;
     }
 
     public void OnRecipeServed()
@@ -44,20 +38,6 @@ public class GameManager : MonoBehaviour
     public int GetTotalRecipesServed()
     {
         return totalRecipesServed;
-    }
-
-    public float GetElapsedTime()
-    {
-        if (!gameStarted) return 0f;
-        return Time.time - gameStartTime;
-    }
-
-    public string GetFormattedTime()
-    {
-        float elapsed = GetElapsedTime();
-        int minutes = Mathf.FloorToInt(elapsed / 60f);
-        int seconds = Mathf.FloorToInt(elapsed % 60f);
-        return $"{minutes}:{seconds:D2}";
     }
 }
 
