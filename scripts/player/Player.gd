@@ -123,7 +123,8 @@ func _auto_try_use() -> void:
 			if station == stations.get("rendu") and _has_cooked_plate():
 				target_set = false
 
-			# Wait for signal completed	
+
+			# Wait for signal completed
 			if is_recipe_complete() and not has_delivered:
 				has_delivered = true
 				emit_signal("recipe_completed")
