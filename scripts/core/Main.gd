@@ -15,7 +15,9 @@ func _ready() -> void:
 	
 	_setup_player_stations()
 	_connect_signals()
-	_update_recipe_ui()
+	#_update_recipe_ui()
+	# Lancer automatiquement les recettes
+	start_recipes_automatically()
 
 func _setup_player_stations() -> void:
 	player.stations = {
@@ -26,19 +28,18 @@ func _setup_player_stations() -> void:
 	}
 
 func _connect_signals() -> void:
-	$UI/Menu/BtnPizza.connect("pressed", _on_btn_pizza_pressed)
-	$UI/Menu/BtnFunghi.connect("pressed", _on_btn_funghi_pressed)
+	#$UI/Menu/BtnPizza.connect("pressed", _on_btn_pizza_pressed)
+	#$UI/Menu/BtnFunghi.connect("pressed", _on_btn_funghi_pressed)
 	$RenduStation.connect("delivered", _on_delivered)
 
 func show_message(msg: String) -> void:
 	status_label.text = msg
 
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("recipe_1"):
-		_set_recipe(recipe_manager.get_recipe_by_name("Pizza"))
-	elif event.is_action_pressed("recipe_2"):
-		_set_recipe(recipe_manager.get_recipe_by_name("Funghi"))
-
+#func _input(event: InputEvent) -> void:
+#	if event.is_action_pressed("recipe_1"):
+#		_set_recipe(recipe_manager.get_recipe_by_name("Pizza"))
+#	elif event.is_action_pressed("recipe_2"):
+#		_set_recipe(recipe_manager.get_recipe_by_name("Funghi"))
 func _set_recipe(recipe: Recipe) -> void:
 	if not recipe:
 		return
@@ -63,20 +64,19 @@ func _reset_player() -> void:
 	player.target_set = false
 	player.global_position = Vector2(100, 200)
 
-func _update_recipe_ui() -> void:
+
+
+
+func start_recipes_automatically() -> void:
 	var recipes = recipe_manager.get_all_recipes()
-	if recipes.size() >= 2:
-		$UI/Menu/BtnPizza.text = recipes[0].get_display_name()
-		$UI/Menu/BtnFunghi.text = recipes[1].get_display_name()
-		$UI/RecipesRight/BtnPizzaOverlay.text = recipes[0].get_display_name()
-		$UI/RecipesRight/BtnFunghiOverlay.text = recipes[1].get_display_name()
-	status_label.text = "Choisis une recette: 1=Pizza, 2=Funghi"
+	for recipe in recipes:
+		_set_recipe(recipe)
+		await player.recipe_completed    
 
-func _on_btn_pizza_pressed() -> void:
-	_set_recipe(recipe_manager.get_recipe_by_name("Pizza"))
+		var timer = get_tree().create_timer(5.0)
+		await timer.timeout
 
-func _on_btn_funghi_pressed() -> void:
-	_set_recipe(recipe_manager.get_recipe_by_name("Funghi"))
+
 
 func _on_delivered() -> void:
 	if not $PlateStation.has_node("Plate"):

@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+signal recipe_completed
+
 @export var speed: float = 200.0
 
 # État du joueur
@@ -119,9 +121,13 @@ func _auto_try_use() -> void:
 			
 			# Gestion de la livraison
 			if station == stations.get("rendu") and _has_cooked_plate():
-				has_delivered = true
 				target_set = false
-			
+
+
+			# Wait for signal completed
+			if is_recipe_complete() and not has_delivered:
+				has_delivered = true
+				emit_signal("recipe_completed")
 			# Restaurer l'obstacle après utilisation
 			if station == target_node:
 				_restore_target_obstacle()
