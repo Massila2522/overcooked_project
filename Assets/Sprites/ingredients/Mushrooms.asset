@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d57539ccc1ed62141b02795d33210aed, type: 3}
+  m_Name: Mushrooms
+  m_EditorClassIdentifier: 
+  rawSprite: {fileID: 21300000, guid: adbc386c7ce2bf54fa47a66a4bf1a0b9, type: 3}
+  cutSprite: {fileID: 21300000, guid: 1bcd87096b721754e90e7b0541c3e460, type: 3}
+  choppedSprite: {fileID: 0}
+  cookedSprite: {fileID: 21300000, guid: 028cc64a84427c241b6f48f263c748d2, type: 3}
