@@ -7,8 +7,7 @@ public class GameManager : MonoBehaviour
     [Header("Game Settings")]
     public RecipeManager recipeManager;
 
-    // Valeurs fixes - 6 recettes en 2 minutes
-    private const int OBJECTIF_RECETTES = 6;
+    // Durée fixe de 2 minutes - on compte les recettes
     private const float DUREE_SIMULATION = 120f; // 2 minutes
     
     private int totalRecipesServed = 0;
@@ -42,7 +41,8 @@ public class GameManager : MonoBehaviour
         gameStartTime = Time.time;
         
         Debug.Log("╔══════════════════════════════════════════════╗");
-        Debug.Log("║   🎮 SIMULATION: 6 recettes en 2 minutes!    ║");
+        Debug.Log("║   🎮 SIMULATION: 2 minutes!                  ║");
+        Debug.Log("║   ⏱  Combien de recettes en 2 min?           ║");
         Debug.Log("╚══════════════════════════════════════════════╝");
     }
 
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         
         float elapsed = Time.time - gameStartTime;
         
-        // Arrêter à exactement 2 minutes (120 secondes)
+        // Arrêter à exactement 2 minutes
         if (elapsed >= DUREE_SIMULATION)
         {
             FinirSimulation();
@@ -62,7 +62,6 @@ public class GameManager : MonoBehaviour
     public void OnRecipeServed()
     {
         if (gameFinished) return;
-        if (totalRecipesServed >= OBJECTIF_RECETTES) return;
         
         totalRecipesServed++;
         
@@ -70,13 +69,7 @@ public class GameManager : MonoBehaviour
         int min = Mathf.FloorToInt(elapsed / 60f);
         int sec = Mathf.FloorToInt(elapsed % 60f);
         
-        Debug.Log($"✓ Recette {totalRecipesServed}/{OBJECTIF_RECETTES} - Temps: {min}:{sec:D2}");
-        
-        // Arrêter quand on atteint 6 recettes
-        if (totalRecipesServed >= OBJECTIF_RECETTES)
-        {
-            FinirSimulation();
-        }
+        Debug.Log($"✓ Recette #{totalRecipesServed} - Temps: {min}:{sec:D2}");
     }
     
     private void FinirSimulation()
@@ -84,22 +77,10 @@ public class GameManager : MonoBehaviour
         if (gameFinished) return;
         gameFinished = true;
         
-        float elapsed = Time.time - gameStartTime;
-        int min = Mathf.FloorToInt(elapsed / 60f);
-        int sec = Mathf.FloorToInt(elapsed % 60f);
-        
         Debug.Log("╔═══════════════════════════════════════════════════╗");
-        if (totalRecipesServed >= OBJECTIF_RECETTES)
-        {
-            Debug.Log($"║   🏆 6/6 RECETTES EN {min}:{sec:D2}! 🏆               ║");
-        }
-        else
-        {
-            Debug.Log("║         ⏱ TEMPS ÉCOULÉ - 2 MINUTES ⏱              ║");
-        }
+        Debug.Log("║         ⏱  2 MINUTES ÉCOULÉES! ⏱                 ║");
         Debug.Log("╠═══════════════════════════════════════════════════╣");
-        Debug.Log($"║   Recettes: {totalRecipesServed}/{OBJECTIF_RECETTES}                                 ║");
-        Debug.Log($"║   Temps: {min}:{sec:D2}                                   ║");
+        Debug.Log($"║   🍽  RECETTES SERVIES: {totalRecipesServed}                       ║");
         Debug.Log("╚═══════════════════════════════════════════════════╝");
         
         if (recipeManager != null)
@@ -120,7 +101,7 @@ public class GameManager : MonoBehaviour
     
     public int GetMaxRecipes()
     {
-        return OBJECTIF_RECETTES;
+        return totalRecipesServed; // Pas de max, on compte juste
     }
 
     public float GetElapsedTime()
