@@ -38,7 +38,8 @@ Un compteur de temps ainsi qu’un compteur du nombre de recettes exécutées on
 - **main** : cette branche contient la dernière version du jeu, avec multi agents (5 agents) et codé avec Unity.
 - **automaticalReceipe** : contient le projet 1, le jeu Overcooked avec un seul agent développé avec godot.
 - **un_agent_unity** : cette branche contient la version du jeu overcooked avec un seul agent codé avec Unity.
+- **double-agents** : cette branche contient la version du jeu overcooked avec deux agents codé avec Unity.
 - **multi-agent-unity** : cette branche contient la version du jeu avec multi agents (5 agents) codé avec Unity.
 
 ## Note:
-Dans le premier rendu nous avons oublié de faire un merge de la brache automaticalReceipe main ce qui fais que la dernière version était dans la branche automaticalReceipe et non pas dans main, mais actuellement main est à jour.
+Dans le premier rendu nous avons oublié de faire un merge de la branche automaticalReceipe main ce qui fais que la dernière version était dans la branche automaticalReceipe et non pas dans main, mais actuellement main est à jour.
