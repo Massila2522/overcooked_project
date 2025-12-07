@@ -4,7 +4,10 @@ using System.Collections;
 public abstract class Agent : MonoBehaviour
 {
     [Header("Agent Settings")]
-    public float moveSpeed = 3f;
+    public float moveSpeed = 1.2f;
+    
+    // Vitesse forcée - ignore l'Inspector
+    private const float VITESSE_FORCEE = 2.6f;
 
     [Header("Identification")]
     [SerializeField] [Tooltip("Label affiché au-dessus de l'agent. Si vide, utilise le nom du GameObject ou un nom par défaut.")]
@@ -34,6 +37,9 @@ public abstract class Agent : MonoBehaviour
 
     protected virtual void Start()
     {
+        // Force la vitesse (ignore l'Inspector)
+        moveSpeed = VITESSE_FORCEE;
+        
         InitializeLabel();
     }
 

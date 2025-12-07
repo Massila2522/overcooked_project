@@ -8,7 +8,7 @@ using UnityEditor;
 public class CooperativeAgentSetup : EditorWindow
 {
     private int numberOfAgents = 2;
-    private float moveSpeed = 4f;
+    private float moveSpeed = 1.2f;
     private Color agent1Color = new Color(1f, 0.9f, 0.7f); // Jaune clair
     private Color agent2Color = new Color(0.7f, 0.9f, 1f); // Bleu clair
     private Sprite agentSprite;

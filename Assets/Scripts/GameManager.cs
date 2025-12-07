@@ -48,21 +48,20 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (!gameStarted || gameFinished) return;
+        // Le timer continue indéfiniment - on note juste les recettes à 2 minutes
+        if (!gameStarted) return;
         
         float elapsed = Time.time - gameStartTime;
         
-        // Arrêter à exactement 2 minutes
-        if (elapsed >= DUREE_SIMULATION)
+        // Afficher le résultat à 2 minutes (mais continuer)
+        if (!gameFinished && elapsed >= DUREE_SIMULATION)
         {
-            FinirSimulation();
+            AfficherResultat2Minutes();
         }
     }
 
     public void OnRecipeServed()
     {
-        if (gameFinished) return;
-        
         totalRecipesServed++;
         
         float elapsed = Time.time - gameStartTime;
@@ -72,21 +71,22 @@ public class GameManager : MonoBehaviour
         Debug.Log($"✓ Recette #{totalRecipesServed} - Temps: {min}:{sec:D2}");
     }
     
-    private void FinirSimulation()
+    private int recettesA2Minutes = 0;
+    
+    private void AfficherResultat2Minutes()
     {
-        if (gameFinished) return;
-        gameFinished = true;
+        gameFinished = true; // Marque que les 2 min sont passées
+        recettesA2Minutes = totalRecipesServed;
         
         Debug.Log("╔═══════════════════════════════════════════════════╗");
         Debug.Log("║         ⏱  2 MINUTES ÉCOULÉES! ⏱                 ║");
         Debug.Log("╠═══════════════════════════════════════════════════╣");
-        Debug.Log($"║   🍽  RECETTES SERVIES: {totalRecipesServed}                       ║");
+        Debug.Log($"║   🍽  RECETTES EN 2 MIN: {recettesA2Minutes}                       ║");
+        Debug.Log("╠═══════════════════════════════════════════════════╣");
+        Debug.Log("║   ▶  Le jeu continue...                           ║");
         Debug.Log("╚═══════════════════════════════════════════════════╝");
         
-        if (recipeManager != null)
-        {
-            recipeManager.StopSpawning();
-        }
+        // On ne stoppe PAS le recipeManager - le jeu continue
     }
 
     public int GetTotalRecipesServed()
@@ -107,8 +107,7 @@ public class GameManager : MonoBehaviour
     public float GetElapsedTime()
     {
         if (!gameStarted) return 0f;
-        if (gameFinished) return DUREE_SIMULATION;
-        return Time.time - gameStartTime;
+        return Time.time - gameStartTime;  // Continue après 2 min
     }
 
     public string GetFormattedTime()
