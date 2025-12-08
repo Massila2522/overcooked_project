@@ -5,7 +5,7 @@ Cette version correspond également au dernier merge effectué vers la branche m
 
 Ci-dessous une vidéo démonstrative de cette version du jeu :
 
-Lien : (à insérer)
+Lien : [https://youtu.be/_t5vKw50WaQ](https://youtu.be/_t5vKw50WaQ)
 
 ## Résumé des branches principales du projet
 
