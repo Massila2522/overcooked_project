@@ -5,7 +5,7 @@ La version de Unity utilisée est : 6000.0.63f1.
 
 Ci-dessous une vidéo démonstrative de cette version du jeu :
 
-Lien : (à insérer)
+[Regarde la vidéo sur YouTube](https://youtu.be/_t5vKw50WaQ)
 
 ## Résumé du jeu:
 Ce jeu est une réinterprétation en 2D du gameplay d’Overcooked, développée avec Unity, où plusieurs agents coopèrent pour préparer des recettes. Les commandes arrivent aléatoirement (soupes ou hamburgers) et génèrent une file d’ingrédients à traiter dans l’ordre.
