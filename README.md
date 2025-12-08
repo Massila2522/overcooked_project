@@ -5,7 +5,7 @@ Elle constitue une étape intermédiaire entre la version à un seul agent et la
 
 Ci-dessous une vidéo démonstrative de cette version du jeu :
 
-Lien : (à insérer)
+[Regarde la vidéo Double Agents](https://youtu.be/eXvMUeWZmbU)
 
 ## Résumé des branches principales du projet
 
